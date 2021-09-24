@@ -14,7 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@mui/lab": "^5.0.0-alpha.48",
+    "express": "^4.17.1",
+    "react-datepicker": "^4.2.1"
   },
   "engines": {
     "node": "10.19.0"
