@@ -16,7 +16,9 @@
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@mui/lab": "^5.0.0-alpha.48",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-pino-logger": "^6.0.0",
     "react-datepicker": "^4.2.1"
   },
   "engines": {

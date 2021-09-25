@@ -38,8 +38,8 @@ function Copyright(props) {
 
 function App() {
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
   const [ageFrom, setAgeFrom] = useState(ages[1]);
   const [ageTo, setAgeTo] = useState(ages[50]);
@@ -47,8 +47,46 @@ function App() {
   const [sex, setSex] = useState(sexes[0]);
   const [province, setProvince] = useState(provinces[1]);
 
+  // Responses error
+  // eslint-disable-next-line
+  const [response, setResponse] = useState(null);
+  // eslint-disable-next-line
+  const [error, setError] = useState(null);
+
+  // Response Datos
+  // eslint-disable-next-line
+  const [numberDeaths, setNumberDeaths] = useState(0);
+  // eslint-disable-next-line
+  const [newCases, setNewCases] = useState(0);
+
   function filtrar() {
-    console.log("a verrr " + sex[0] + " " + startDate + " " + endDate + " " + ageFrom + " " + ageTo + " " + province)
+    console.log("a verrr " + sex[0].value + " " + startDate.format + " " + endDate + " " + ageFrom[0].value + " " + ageTo[0].value + " " + province[0].value);
+
+    fetch(`http://localhost:3001/covid/total?startDate=${startDate}&endDate=${endDate}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/html',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3001',
+        // eslint-disable-next-line
+        'Access-Control-Allow-Origin': '*',
+      }
+    }).then((response) => {
+      console.log(response)
+      setResponse(response.status);
+
+      if (response.status >= 500) {
+        setError(true);
+      }
+      return response.json();
+    })
+      .then((data) => {
+        setNewCases(data.mensaje)
+      })
+      .catch((error) => {
+        console.log('error: ' + error);
+        setError(true);
+      });
   }
 
   return (
@@ -139,14 +177,14 @@ function App() {
                 <table>
                   <tbody>
                     <tr>
-                      <label>
-                        Date:
-                      </label>
+                      <td>
+                        <label>Date:</label>
+                      </td>
                     </tr>
                     <tr>
-                      <td><label>
-                        From:
-                      </label></td>
+                      <td>
+                        <label>From:</label>
+                      </td>
                       <td>
                         <DatePicker selected={startDate}
                           onChange={setStartDate}
@@ -157,9 +195,9 @@ function App() {
                       </td>
                     </tr>
                     <tr>
-                      <td><label>
-                        To:
-                      </label></td>
+                      <td>
+                        <label>To:</label>
+                      </td>
                       <td>
                         <DatePicker selected={endDate}
                           onChange={setEndDate}
@@ -169,47 +207,44 @@ function App() {
                       </td>
                     </tr>
                     <tr>
-                      <label>
-                        Age:
-                      </label>
+                      <td>
+                        <label>Age:</label>
+                      </td>
                     </tr>
                     <tr>
-                      <td><label>
-                        From:
-                      </label></td>
+                      <td>
+                        <label>From:</label>
+                      </td>
 
-                      <td className="combo-large"><Select value={ageFrom} options={ages} onChange={setAgeFrom} placeholderText="Seleccione una fecha!" /></td>
-
+                      <td className="combo-large"><Select value={ageFrom} key="id" options={ages} onChange={setAgeFrom} placeholderText="Seleccione una fecha!" /></td>
                     </tr>
                     <tr>
-                      <td><label>
-                        To:
-                      </label></td>
+                      <td>
+                        <label>To:</label>
+                      </td>
 
                       <td className="combo-large"><Select value={ageTo} options={ages} onChange={setAgeTo} placeholderText="Seleccione una fecha!" /></td>
-
                     </tr>
                     <tr>
-                      <label>
-                        Others:
-                      </label>
+                      <td>
+                        <label>Others:</label>
+                      </td>
                     </tr>
                     <tr>
-                      <td><label>
-                        Sex:
-                      </label></td>
+                      <td>
+                        <label>Sex:</label>
+                      </td>
                       <td className="combo-large">
                         <Select value={sex} options={sexes} onChange={setSex} />
                       </td>
                     </tr>
 
                     <tr>
-                      <td><label>
-                        Province:
-                      </label></td>
+                      <td>
+                        <label>Province:</label>
+                      </td>
                       <td className="combo-large">
-
-                        <Select value={province} options={provinces} onChange={setProvince} />
+                        <Select value={province} key="id" options={provinces} onChange={setProvince} />
                       </td>
                     </tr>
                   </tbody>
