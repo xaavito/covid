@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,8 +15,11 @@ import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import DatePicker from "react-datepicker";
+import Select from "react-dropdown-select";
 
 import "react-datepicker/dist/react-datepicker.css";
+
+import { ages, sexes, provinces } from "./options"
 
 function Copyright(props) {
   return (
@@ -29,33 +33,18 @@ function Copyright(props) {
     </Typography>
   );
 }
-/*
-const footers = [
-  {
-    title: 'Company',
-    description: ['Team', 'History', 'Contact us', 'Locations'],
-  },
-  {
-    title: 'Features',
-    description: [
-      'Cool stuff',
-      'Random feature',
-      'Team feature',
-      'Developer stuff',
-      'Another one',
-    ],
-  },
-  {
-    title: 'Resources',
-    description: ['Resource', 'Resource name', 'Another resource', 'Final resource'],
-  },
-  {
-    title: 'Legal',
-    description: ['Privacy policy', 'Terms of use'],
-  },
-];
-*/
+
+
 function App() {
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  const [ageFrom, setAgeFrom] = useState(1);
+  const [ageTo, setAgeTo] = useState(50);
+
+  const [sex, setSex] = useState(0);
+  const [province, setProvince] = useState(1);
+
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -149,10 +138,43 @@ function App() {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'baseline',
-                    mb: 2,
+                    mb: 1,
                   }}
                 >
-                  <DatePicker />
+                  <DatePicker selected={startDate}
+                    onChange={(startDate) => setStartDate(startDate)}
+                    placeholderText="Fecha Desde"
+                    dateFormat="dd/MM/yyyy" />
+
+                  <DatePicker selected={endDate}
+                    onChange={(endDate) => setEndDate(endDate)}
+                    placeholderText="Fecha Hasta"
+                    dateFormat="dd/MM/yyyy" />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'baseline',
+                    mb: 1,
+                  }}
+                >
+                  <Select value={ageFrom} options={ages} onChange={(ageFrom) => setAgeFrom(ageFrom)} />
+
+                  <Select value={ageTo} options={ages} onChange={(ageTo) => setAgeTo(ageTo)} />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'baseline',
+                    mb: 1,
+                  }}
+                >
+
+                  <Select value={sex} options={sexes} onChange={(sex) => setSex(sex)} />
+
+                  <Select value={province} options={provinces} onChange={(province) => setProvince(province)} />
                 </Box>
               </CardContent>
               <CardActions>
