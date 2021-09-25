@@ -18,6 +18,7 @@ import DatePicker from "react-datepicker";
 import Select from "react-dropdown-select";
 
 import "react-datepicker/dist/react-datepicker.css";
+import "./App.css";
 
 import { ages, sexes, provinces } from "./options"
 
@@ -36,20 +37,20 @@ function Copyright(props) {
 
 
 function App() {
-  
+
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  const [ageFrom, setAgeFrom] = useState(1);
-  const [ageTo, setAgeTo] = useState(50);
+  const [ageFrom, setAgeFrom] = useState(ages[1]);
+  const [ageTo, setAgeTo] = useState(ages[50]);
 
-  const [sex, setSex] = useState(0);
-  const [province, setProvince] = useState(1);
-  
+  const [sex, setSex] = useState(sexes[0]);
+  const [province, setProvince] = useState(provinces[1]);
+
   function filtrar() {
-    console.log("a verrr " + sex + " " + startDate + " " + endDate + " " + ageFrom +" " + ageTo +" " + province)
+    console.log("a verrr " + sex[0] + " " + startDate + " " + endDate + " " + ageFrom + " " + ageTo + " " + province)
   }
-  
+
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -62,7 +63,7 @@ function App() {
       >
         <Toolbar sx={{ flexWrap: 'wrap' }}>
           <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            Company name
+            Covid Bot by Javier Gonzalez
           </Typography>
           <nav>
             <Link
@@ -71,7 +72,7 @@ function App() {
               href="#"
               sx={{ my: 1, mx: 1.5 }}
             >
-              Features
+              About Javier Gonzalez
             </Link>
             <Link
               variant="button"
@@ -79,20 +80,17 @@ function App() {
               href="#"
               sx={{ my: 1, mx: 1.5 }}
             >
-              Enterprise
+              ver si ponemos algo aca
             </Link>
-            <Link
+            <a
               variant="button"
               color="text.primary"
-              href="#"
+              href="www.google.com"
               sx={{ my: 1, mx: 1.5 }}
             >
-              Support
-            </Link>
+              y aca tambien
+            </a>
           </nav>
-          <Button href="#" variant="outlined" sx={{ my: 1, mx: 1.5 }}>
-            Login
-          </Button>
         </Toolbar>
       </AppBar>
       {/* Hero unit */}
@@ -127,7 +125,7 @@ function App() {
                 titleTypographyProps={{ align: 'center' }}
                 action={null}
                 subheaderTypographyProps={{
-                  align: 'center',
+                  align: 'left',
                 }}
                 sx={{
                   backgroundColor: (theme) =>
@@ -136,51 +134,86 @@ function App() {
                       : theme.palette.grey[700],
                 }}
               />
+
               <CardContent>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'baseline',
-                    mb: 1,
-                  }}
-                >
-                  <DatePicker selected={startDate}
-                    onChange={setStartDate}
-                    placeholderText="Fecha Desde"
-                    dateFormat="dd/MM/yyyy"
-                    value={startDate} />
+                <table>
+                  <tbody>
+                    <tr>
+                      <label>
+                        Date:
+                      </label>
+                    </tr>
+                    <tr>
+                      <td><label>
+                        From:
+                      </label></td>
+                      <td>
+                        <DatePicker selected={startDate}
+                          onChange={setStartDate}
+                          placeholderText="Fecha Desde"
+                          dateFormat="dd/MM/yyyy"
+                          value={startDate}
+                          className="combo-large" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label>
+                        To:
+                      </label></td>
+                      <td>
+                        <DatePicker selected={endDate}
+                          onChange={setEndDate}
+                          placeholderText="Fecha Hasta"
+                          dateFormat="dd/MM/yyyy"
+                          className="combo-large" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <label>
+                        Age:
+                      </label>
+                    </tr>
+                    <tr>
+                      <td><label>
+                        From:
+                      </label></td>
 
-                  <DatePicker selected={endDate}
-                    onChange={setEndDate}
-                    placeholderText="Fecha Hasta"
-                    dateFormat="dd/MM/yyyy" />
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'baseline',
-                    mb: 1,
-                  }}
-                >
-                  <Select value={ageFrom} options={ages} onChange={setAgeFrom} />
+                      <td className="combo-large"><Select value={ageFrom} options={ages} onChange={setAgeFrom} placeholderText="Seleccione una fecha!" /></td>
 
-                  <Select value={ageTo} options={ages} onChange={setAgeTo} />
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'baseline',
-                    mb: 1,
-                  }}
-                >
+                    </tr>
+                    <tr>
+                      <td><label>
+                        To:
+                      </label></td>
 
-                  <Select value={sex} options={sexes} onChange={setSex} />
+                      <td className="combo-large"><Select value={ageTo} options={ages} onChange={setAgeTo} placeholderText="Seleccione una fecha!" /></td>
 
-                  <Select value={province} options={provinces} onChange={setProvince} />
-                </Box>
+                    </tr>
+                    <tr>
+                      <label>
+                        Others:
+                      </label>
+                    </tr>
+                    <tr>
+                      <td><label>
+                        Sex:
+                      </label></td>
+                      <td className="combo-large">
+                        <Select value={sex} options={sexes} onChange={setSex} />
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td><label>
+                        Province:
+                      </label></td>
+                      <td className="combo-large">
+
+                        <Select value={province} options={provinces} onChange={setProvince} />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </CardContent>
               <CardActions>
                 <Button variant="contained" onClick={filtrar}>Filter</Button>
@@ -242,7 +275,7 @@ function App() {
         <Copyright sx={{ mt: 5 }} />
       </Container>
       {/* End footer */}
-    </React.Fragment>
+    </React.Fragment >
   );
 }
 
