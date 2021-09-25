@@ -36,6 +36,7 @@ function Copyright(props) {
 
 
 function App() {
+  
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
@@ -44,7 +45,11 @@ function App() {
 
   const [sex, setSex] = useState(0);
   const [province, setProvince] = useState(1);
-
+  
+  function filtrar() {
+    console.log("a verrr " + sex + " " + startDate + " " + endDate + " " + ageFrom +" " + ageTo +" " + province)
+  }
+  
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -119,7 +124,6 @@ function App() {
             <Card>
               <CardHeader
                 title={"Filtros"}
-                subheader={"Filtros"}
                 titleTypographyProps={{ align: 'center' }}
                 action={null}
                 subheaderTypographyProps={{
@@ -142,12 +146,13 @@ function App() {
                   }}
                 >
                   <DatePicker selected={startDate}
-                    onChange={(startDate) => setStartDate(startDate)}
+                    onChange={setStartDate}
                     placeholderText="Fecha Desde"
-                    dateFormat="dd/MM/yyyy" />
+                    dateFormat="dd/MM/yyyy"
+                    value={startDate} />
 
                   <DatePicker selected={endDate}
-                    onChange={(endDate) => setEndDate(endDate)}
+                    onChange={setEndDate}
                     placeholderText="Fecha Hasta"
                     dateFormat="dd/MM/yyyy" />
                 </Box>
@@ -159,9 +164,9 @@ function App() {
                     mb: 1,
                   }}
                 >
-                  <Select value={ageFrom} options={ages} onChange={(ageFrom) => setAgeFrom(ageFrom)} />
+                  <Select value={ageFrom} options={ages} onChange={setAgeFrom} />
 
-                  <Select value={ageTo} options={ages} onChange={(ageTo) => setAgeTo(ageTo)} />
+                  <Select value={ageTo} options={ages} onChange={setAgeTo} />
                 </Box>
                 <Box
                   sx={{
@@ -172,12 +177,13 @@ function App() {
                   }}
                 >
 
-                  <Select value={sex} options={sexes} onChange={(sex) => setSex(sex)} />
+                  <Select value={sex} options={sexes} onChange={setSex} />
 
-                  <Select value={province} options={provinces} onChange={(province) => setProvince(province)} />
+                  <Select value={province} options={provinces} onChange={setProvince} />
                 </Box>
               </CardContent>
               <CardActions>
+                <Button variant="contained" onClick={filtrar}>Filter</Button>
               </CardActions>
             </Card>
           </Grid>
@@ -190,8 +196,7 @@ function App() {
           >
             <Card>
               <CardHeader
-                title={"Prueba"}
-                subheader={"Prueba"}
+                title={"Resultados"}
                 titleTypographyProps={{ align: 'center' }}
                 action={null}
                 subheaderTypographyProps={{
