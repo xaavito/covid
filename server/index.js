@@ -27,7 +27,7 @@ app.get("/api", (req, res) => {
 
 app.get("/covid/total", async (req, res) => {
   try {
-    console.log("/covid/deaths");
+    console.log("/covid/total");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -46,7 +46,7 @@ app.get("/covid/deaths", async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     //si falla usar .json(resultadoConfirmados.rows)
-    res.status(200).send({ covidDetahs: '50' });
+    res.status(200).send({ covidDeaths: '50' });
   } catch (err) {
     console.error(err);
     res.status(504).send({ mensaje: err });
@@ -60,7 +60,7 @@ app.get("/covid/update", async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     //si falla usar .json(resultadoConfirmados.rows)
-    res.status(200).send({ lastUpdateCases: '2000' , lastUpdateDate: 'yesterday'});
+    res.status(200).send({ lastUpdateCases: '2000' , lastUpdateDate: new Date()});
   } catch (err) {
     console.error(err);
     res.status(504).send({ mensaje: err });

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -55,12 +54,51 @@ function App() {
 
   // Response Datos
   // eslint-disable-next-line
-  const [numberDeaths, setNumberDeaths] = useState(0);
+  const [deaths, setDeaths] = useState(0);
   // eslint-disable-next-line
   const [newCases, setNewCases] = useState(0);
+  // eslint-disable-next-line
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  // eslint-disable-next-line
+  const [newRegistriesAdded, setNewRegistriesAdded] = useState(0);
+
+  const [errorMessage, setErrorMessage] = useState(null);
+
+
+  function synchronizeCases() {
+    fetch(`http://localhost:3001/covid/update`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/html',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3001',
+        // eslint-disable-next-line
+        'Access-Control-Allow-Origin': '*',
+      }
+    }).then((response) => {
+      console.log(response)
+      setResponse(response.status);
+
+      if (response.status >= 500) {
+        setError(true);
+        setErrorMessage(response.mensaje)
+      }
+      return response.json();
+    })
+      .then((data) => {
+        setLastUpdated(data.lastUpdateDate);
+        setNewRegistriesAdded(data.lastUpdateCases);
+      })
+      .catch((error) => {
+        console.log('error: ' + error);
+        setError(true);
+        setErrorMessage(response.mensaje);
+      });
+
+  }
 
   function filtrar() {
-    console.log("a verrr " + sex[0].value + " " + startDate.format + " " + endDate + " " + ageFrom[0].value + " " + ageTo[0].value + " " + province[0].value);
+    //console.log("a verrr " + sex[0].value + " " + startDate.format + " " + endDate + " " + ageFrom[0].value + " " + ageTo[0].value + " " + province[0].value);
 
     fetch(`http://localhost:3001/covid/total?startDate=${startDate}&endDate=${endDate}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
       method: 'GET',
@@ -77,15 +115,45 @@ function App() {
 
       if (response.status >= 500) {
         setError(true);
+        setErrorMessage(response.mensaje);
       }
       return response.json();
     })
       .then((data) => {
-        setNewCases(data.mensaje)
+        setNewCases(data.newCases)
       })
       .catch((error) => {
         console.log('error: ' + error);
         setError(true);
+        setErrorMessage(response.mensaje);
+      });
+
+    fetch(`http://localhost:3001/covid/deaths?startDate=${startDate}&endDate=${endDate}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/html',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3001',
+        // eslint-disable-next-line
+        'Access-Control-Allow-Origin': '*',
+      }
+    }).then((response) => {
+      console.log(response)
+      setResponse(response.status);
+
+      if (response.status >= 500) {
+        setError(true);
+        setErrorMessage(response.mensaje);
+      }
+      return response.json();
+    })
+      .then((data) => {
+        setDeaths(data.covidDeaths)
+      })
+      .catch((error) => {
+        console.log('error: ' + error);
+        setError(true);
+        setErrorMessage(response.mensaje);
       });
   }
 
@@ -104,30 +172,7 @@ function App() {
             Covid Bot by Javier Gonzalez
           </Typography>
           <nav>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              About Javier Gonzalez
-            </Link>
-            <Link
-              variant="button"
-              color="text.primary"
-              href="#"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              ver si ponemos algo aca
-            </Link>
-            <a
-              variant="button"
-              color="text.primary"
-              href="www.google.com"
-              sx={{ my: 1, mx: 1.5 }}
-            >
-              y aca tambien
-            </a>
+            <h3 className="error"> {errorMessage} </h3>
           </nav>
         </Toolbar>
       </AppBar>
@@ -178,7 +223,7 @@ function App() {
                   <tbody>
                     <tr>
                       <td>
-                        <label>Date:</label>
+                        <label className="filter-font-big">Date</label>
                       </td>
                     </tr>
                     <tr>
@@ -208,7 +253,7 @@ function App() {
                     </tr>
                     <tr>
                       <td>
-                        <label>Age:</label>
+                        <label className="filter-font-big">Age</label>
                       </td>
                     </tr>
                     <tr>
@@ -227,7 +272,7 @@ function App() {
                     </tr>
                     <tr>
                       <td>
-                        <label>Others:</label>
+                        <label className="filter-font-big">Others</label>
                       </td>
                     </tr>
                     <tr>
@@ -277,18 +322,43 @@ function App() {
                       : theme.palette.grey[700],
                 }}
               />
-              <CardContent>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'baseline',
-                    mb: 2,
-                  }}
-                >
-                </Box>
+              <CardContent className="center-aligned">
+                <table className="combo-large">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <label className="font-bigger">{newCases}</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label className="font-big">Registered Cases</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label className="font-bigger">{deaths}</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label className="font-big">Deaths</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <label className="font-small">Last import made on {lastUpdated.toDateString}, {newRegistriesAdded} registries added</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="empty-td">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </CardContent>
               <CardActions>
+                <Button variant="contained" onClick={synchronizeCases}>Synchronize</Button>
               </CardActions>
             </Card>
           </Grid>

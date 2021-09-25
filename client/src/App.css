@@ -39,3 +39,29 @@
 .combo-large {
   width: 100%;
 }
+
+.font-bigger {
+  font-size: 4em;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.font-big {
+  font-size: 1.3em;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.center-aligned {
+  text-align: center;
+}
+
+.filter-font-big {
+  font-size: 1.5em;
+  font-weight: bolder;
+}
+
+.empty-td {
+  height: 2.1em;
+}
+
