@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha server/test/index.js",
     "server": "node server/index.js",
     "client": "npm start --prefix client",
     "build": "cd client && npm install && npm run build",
@@ -25,6 +25,11 @@
     "node": "10.19.0"
   },
   "devDependencies": {
-    "concurrently": "^6.2.1"
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "concurrently": "^6.2.1",
+    "mocha": "^9.1.2",
+    "should": "^13.2.3",
+    "supertest": "^6.1.6"
   }
 }
