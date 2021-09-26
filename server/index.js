@@ -28,12 +28,7 @@ var url = 'mongodb://localhost:27017/Covid';
 
 //test
 const fs = require('fs');
-/*
-const csv = require('csvtojson');
-const streamToMongoDB = require('stream-to-mongo-db').streamToMongoDB;
-*/
 
-//const fs = require('fs');
 const readline = require('readline');
 
 //const csvFile = './Covid19Casos.csv';
@@ -98,18 +93,14 @@ app.get("/covid/total", async (req, res) => {
           $gte: Number(ageFrom),
           $lt: Number(ageTo)
         },
-        'sexo': sex 
-        ,
+        'sexo': sex,
         'fecha_diagnostico': {
           $gte: startDate,
           $lt: endDate
-        }
-        /*,
+        },
         'residencia_provincia_id': Number(province),
-        'clasificacion_resumen': 'Confirmado'
-        ,
+        'clasificacion_resumen': 'Confirmado',
         'fecha_fallecimiento': ''
-        */
       }, function (err, results) {
         console.log(results); // output all records
         res.status(200).send({ newCases: results });

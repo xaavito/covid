@@ -89,24 +89,24 @@ function App() {
 
   function getQueryString(){
     var qs = ""
-    if (!startDate) {
+    if (startDate != null) {
       qs += `?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`   
     }
-    if (!endDate) {
-      qs += `&endDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`   
+    if (endDate != null) {
+      qs += `&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}`   
     }
     //console.log(ageFrom[0])
     if (ageFrom[0] != null) {
-      qs += `?ageFrom=${ageFrom[0].value}`   
+      qs += `&ageFrom=${ageFrom[0].value}`   
     }
     if (ageTo[0] != null) {
-      qs += `?ageTo=${ageTo[0].value}`
+      qs += `&ageTo=${ageTo[0].value}`
     }
     if (sex[0] != null) {
-      qs += `?sex=${sex[0].value}`
+      qs += `&sex=${sex[0].value}`
     }
     if (province[0] != null) {
-      qs += `?province=${province[0].value}`
+      qs += `&province=${province[0].value}`
     }
     console.log("query string resultante " + qs);
     return qs;
@@ -149,6 +149,7 @@ function App() {
       setErrorMessage("Ingresar Fecha desde y Hasta por favor");
       return;
     }
+    //console.log(getQueryString())
     fetch(`http://localhost:3001/covid/total${getQueryString()}`, {
       method: 'GET',
       headers: {
