@@ -88,8 +88,28 @@ function App() {
   }
 
   function getQueryString(){
-    
-    return "";
+    var qs = ""
+    if (!startDate) {
+      qs += `?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`   
+    }
+    if (!endDate) {
+      qs += `&endDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`   
+    }
+    //console.log(ageFrom[0])
+    if (ageFrom[0] != null) {
+      qs += `?ageFrom=${ageFrom[0].value}`   
+    }
+    if (ageTo[0] != null) {
+      qs += `?ageTo=${ageTo[0].value}`
+    }
+    if (sex[0] != null) {
+      qs += `?sex=${sex[0].value}`
+    }
+    if (province[0] != null) {
+      qs += `?province=${province[0].value}`
+    }
+    console.log("query string resultante " + qs);
+    return qs;
   }
 
   function synchronizeCases() {
@@ -129,7 +149,7 @@ function App() {
       setErrorMessage("Ingresar Fecha desde y Hasta por favor");
       return;
     }
-    fetch(`http://localhost:3001/covid/total?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+    fetch(`http://localhost:3001/covid/total${getQueryString()}`, {
       method: 'GET',
       headers: {
         'Accept': 'text/html',
@@ -158,7 +178,7 @@ function App() {
       });
 
     
-    fetch(`http://localhost:3001/covid/deaths?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+    fetch(`http://localhost:3001/covid/deaths${getQueryString()}`, {
       method: 'GET',
       headers: {
         'Accept': 'text/html',
