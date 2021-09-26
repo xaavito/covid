@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  database:
+    image: 'mongo'
+    container_name: 'mongo'
+    environment:
+      - MONGO_INITDB_DATABASE=covid
+      - MONGO_INITDB_ROOT_USERNAME=covid
+      - MONGO_INITDB_ROOT_PASSWORD=covid
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
+      - ./mongo-import-volume:/data/import
+    ports:
+      - '27017-27019:27017-27019'
+    restart: unless-stopped

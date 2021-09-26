@@ -15,3 +15,8 @@ mongoimport --db covid --collection casos_1 --type csv --file Covid19Casos.csv -
 https://stackoverflow.com/questions/24985684/mongodb-show-all-contents-from-all-collections
 
 
+docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
+
+
+https://stackoverflow.com/questions/42912755/how-to-create-a-db-for-mongodb-container-on-start-up
+

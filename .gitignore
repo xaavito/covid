@@ -119,3 +119,5 @@ dist
 .pnp.*
 
 *.csv
+mongo-volume/*
+mongo-import-volume/*

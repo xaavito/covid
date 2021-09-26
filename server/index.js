@@ -24,7 +24,8 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 
 //DB Connection String
-var url = 'mongodb://localhost:27017/Covid';
+const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
+const collection = 'covid';
 
 //test
 const fs = require('fs');
@@ -32,8 +33,6 @@ const fs = require('fs');
 const readline = require('readline');
 
 //const csvFile = './Covid19Casos.csv';
-const dbURL = 'mongodb://localhost:27017/covid';
-const collection = 'covid';
 
 const line_counter = ((i = 0) => () => ++i)();
 
@@ -82,7 +81,7 @@ app.get("/covid/total", async (req, res) => {
     const sex = req.query.sex
     const province = req.query.province
 
-    mongodb.MongoClient.connect(url, {
+    mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
       //console.log('DB Connected!');
@@ -129,7 +128,7 @@ app.get("/covid/deaths", async (req, res) => {
     const sex = req.query.sex
     const province = req.query.province
 
-    mongodb.MongoClient.connect(url, {
+    mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
       console.log('DB Connected!');
@@ -170,7 +169,7 @@ app.get("/covid/update", async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    mongodb.MongoClient.connect(url, {
+    mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
       console.log('DB Connected!');
