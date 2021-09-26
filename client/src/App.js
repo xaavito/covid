@@ -19,7 +19,7 @@ import Select from "react-dropdown-select";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
 
-import { ages, sexes, provinces } from "./options"
+import { sexes, provinces } from "./options"
 
 function Copyright(props) {
   return (
@@ -34,8 +34,22 @@ function Copyright(props) {
   );
 }
 
+var ages = [];
+
+function loadingAges() {
+  if (ages.length === 0) {
+    for (var i = 0; i < 120; i++) {
+      ages.push({
+        label: i,
+        value: i
+      })
+    }
+  }
+}
 
 function App() {
+
+  loadingAges();
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -64,6 +78,19 @@ function App() {
 
   const [errorMessage, setErrorMessage] = useState(null);
 
+  function getParsedDate(strDate) {
+    var strSplitDate = String(strDate).split('/');
+    var date = ""
+
+    date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
+    console.log(date);
+    return date;
+  }
+
+  function getQueryString(){
+    
+    return "";
+  }
 
   function synchronizeCases() {
     fetch(`http://localhost:3001/covid/update`, {
@@ -98,9 +125,11 @@ function App() {
   }
 
   function filtrar() {
-    //console.log("a verrr " + sex[0].value + " " + startDate.format + " " + endDate + " " + ageFrom[0].value + " " + ageTo[0].value + " " + province[0].value);
-
-    fetch(`http://localhost:3001/covid/total?startDate=${startDate}&endDate=${endDate}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+    if (!startDate || !endDate) {
+      setErrorMessage("Ingresar Fecha desde y Hasta por favor");
+      return;
+    }
+    fetch(`http://localhost:3001/covid/total?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
       method: 'GET',
       headers: {
         'Accept': 'text/html',
@@ -128,7 +157,8 @@ function App() {
         setErrorMessage(response.mensaje);
       });
 
-    fetch(`http://localhost:3001/covid/deaths?startDate=${startDate}&endDate=${endDate}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
+    
+    fetch(`http://localhost:3001/covid/deaths?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}&ageFrom=${ageFrom[0].value}&ageTo=${ageTo[0].value}&sex=${sex[0].value}&province=${province[0].value}`, {
       method: 'GET',
       headers: {
         'Accept': 'text/html',
@@ -187,10 +217,7 @@ function App() {
         >
           Covid-bot
         </Typography>
-        <Typography variant="h5" align="center" color="text.secondary" component="p">
-          Aplicacion para la obtencion de resultados de COVID provistos por
-          http://datos.salud.gob.ar/dataset/covid-19-casos-registrados-en-la-republica-argentina
-        </Typography>
+        
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
