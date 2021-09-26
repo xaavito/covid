@@ -27,7 +27,7 @@ app.get("/api", (req, res) => {
 
 app.get("/covid/total", async (req, res) => {
   try {
-    console.log("/covid/total");
+    console.log("GET /covid/total");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -41,7 +41,7 @@ app.get("/covid/total", async (req, res) => {
 
 app.get("/covid/deaths", async (req, res) => {
   try {
-    console.log("/covid/deaths");
+    console.log("GET /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -55,7 +55,7 @@ app.get("/covid/deaths", async (req, res) => {
 
 app.get("/covid/update", async (req, res) => {
   try {
-    console.log("/covid/deaths");
+    console.log("GET /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -69,7 +69,7 @@ app.get("/covid/update", async (req, res) => {
 
 app.post("/covid/update", async (req, res) => {
   try {
-    console.log("/covid/deaths");
+    console.log("POST /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 

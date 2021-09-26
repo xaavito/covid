@@ -76,7 +76,7 @@ function App() {
         'Access-Control-Allow-Origin': '*',
       }
     }).then((response) => {
-      console.log(response)
+      //console.log(response)
       setResponse(response.status);
 
       if (response.status >= 500) {
@@ -110,7 +110,7 @@ function App() {
         'Access-Control-Allow-Origin': '*',
       }
     }).then((response) => {
-      console.log(response)
+      //console.log(response)
       setResponse(response.status);
 
       if (response.status >= 500) {
@@ -138,7 +138,7 @@ function App() {
         'Access-Control-Allow-Origin': '*',
       }
     }).then((response) => {
-      console.log(response)
+      //console.log(response)
       setResponse(response.status);
 
       if (response.status >= 500) {
