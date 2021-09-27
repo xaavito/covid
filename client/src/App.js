@@ -87,17 +87,17 @@ function App() {
     return date;
   }
 
-  function getQueryString(){
+  function getQueryString() {
     var qs = ""
     if (startDate != null) {
-      qs += `?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`   
+      qs += `?startDate=${getParsedDate(startDate.toLocaleDateString('es-ar'))}`
     }
     if (endDate != null) {
-      qs += `&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}`   
+      qs += `&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}`
     }
     //console.log(ageFrom[0])
     if (ageFrom[0] != null) {
-      qs += `&ageFrom=${ageFrom[0].value}`   
+      qs += `&ageFrom=${ageFrom[0].value}`
     }
     if (ageTo[0] != null) {
       qs += `&ageTo=${ageTo[0].value}`
@@ -114,7 +114,7 @@ function App() {
 
   function synchronizeCases() {
     fetch(`http://localhost:3001/covid/update`, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Accept': 'text/html',
         'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ function App() {
         setErrorMessage(response.mensaje);
       });
 
-    
+
     fetch(`http://localhost:3001/covid/deaths${getQueryString()}`, {
       method: 'GET',
       headers: {
@@ -238,7 +238,7 @@ function App() {
         >
           Covid-bot
         </Typography>
-        
+
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
@@ -336,8 +336,10 @@ function App() {
                       <td>
                         <label>Province:</label>
                       </td>
+
                       <td className="combo-large">
-                        <Select value={province} key="id" options={provinces} onChange={setProvince} />
+                        <Select value={province} key="id" options={provinces} onChange={setProvince}
+                          menuPortalTarget={document.querySelector('body')}/>
                       </td>
                     </tr>
                   </tbody>

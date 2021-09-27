@@ -61,6 +61,10 @@
   font-weight: bolder;
 }
 
+.font-small {
+  font-size: smaller;
+}
+
 .empty-td {
   height: 2.1em;
 }

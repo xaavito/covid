@@ -41,6 +41,18 @@ const line_counter = ((i = 0) => () => ++i)();
 
 var dbConn;
 
+function isTimeToUpdate(lastUpdatedDate) {
+  var parts = lastUpdatedDate.split('-');
+  var mydate = new Date(parts[0], parts[1] - 1, parts[2]);
+  const today = new Date();
+  if (mydate < today) {
+    //console.log(mydate.toDateString());
+    //console.log(today.toDateString());
+    return true;
+  }
+  return false;
+}
+
 async function processLineByLine() {
   const fileStream = fs.createReadStream('./Covid19Casos.csv');
 
@@ -52,7 +64,8 @@ async function processLineByLine() {
   // ('\r\n') in input.txt as a single line break.
 
   rl.on("line", (line, lineno = line_counter()) => {
-    console.log(lineno); //1...2...3...10...100...etc
+    //if line.split(',')
+    console.log(line); //1...2...3...10...100...etc
   });
   /*
   for await (const line of rl) {
@@ -87,7 +100,6 @@ app.get("/covid/total", async (req, res) => {
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
-      //console.log('DB Connected!');
       dbConn = client.db("covid");
 
       dbConn.collection('casos_1').count({
@@ -174,7 +186,7 @@ app.get("/covid/update", async (req, res) => {
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
-    }).then((client) => {
+    }).then(async (client) => {
       console.log('DB Connected!');
       dbConn = client.db("covid");
       /*
@@ -189,15 +201,55 @@ app.get("/covid/update", async (req, res) => {
         console.log(JSON.stringify(result))
       });
       */
-      dbConn.collection('casos_1').count({ 'edad': 52 }, function (err, results) {
-        console.log(results); // output all records
+      dbConn.collection('misc').find({}).toArray((err, results) => {
+        //const results = cursor.toArray();
+        console.log("adentroooo")
+        // If Theres is information we use it.
+        if (results.length === 1) {
+          console.log("hay un caso en misc")
+          lastUpdateCases = results[0].lastUpdateCases;
+          lastUpdateDate = results[0].lastUpdateDate;
+
+          res.status(200).send({ lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate });
+        }
+
+        //if there is no information we gathered it.
+        if (results.length === 0) {
+          console.log("no hay un caso en misc, generamos")
+          const cursor = dbConn.collection('casos_1')
+            .find()
+            .sort({ "id_evento_caso": -1 })
+            .limit(1).toArray((err, results) => {
+              var myobj;
+              if (results.length === 1) {
+                lastUpdateDate = results[0].ultima_actualizacion;
+                console.log("lastUpdateDate " + lastUpdateDate)
+                const cursor = dbConn.collection('casos_1')
+                  .count({}, function (err, results) {
+                    console.log(results); // output all records
+                    lastUpdateCases = results
+
+                    console.log("lastUpdateCases " + lastUpdateCases)
+
+                    myobj = { lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate }
+
+                    dbConn.collection('misc').insertOne(myobj, function (err, res) {
+                      if (err) throw err;
+                      console.log("1 record inserted");
+                      client.close();
+                    });
+                    res.status(200).send({ lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate });
+                  });
+              }
+            });
+        }
       });
     }).catch(err => {
       console.log(`DB Connection Error: ${err.message}`);
     });
 
     //processLineByLine();
-    res.status(200).send({ lastUpdateCases: '2000', lastUpdateDate: new Date() });
+    //res.status(200).send({ lastUpdateCases: '2000', lastUpdateDate: new Date() });
   } catch (err) {
     console.error(err);
     res.status(504).send({ mensaje: err });
@@ -212,16 +264,64 @@ app.post("/covid/update", async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
+    // this works perfectly!!! commented for testing purposes
+    /*
     const file = fs.createWriteStream("UpdatedData.zip");
+  
     const request = http.get("https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip", function (response) {
       response.pipe(file);
 
       response.on('end', function () {
-        console.log("DOwnload Finished");
+        console.log("Download Finished");
+        // Aca deberia venir el deszipeo..
+        
+        res.status(200).send({ status: 'Success' });
       });
     });
-    
-    res.status(200).send({ status: 'Success' });
+    */
+    mongodb.MongoClient.connect(dbURL, {
+      useUnifiedTopology: true,
+    }).then(async (client) => {
+      //console.log('DB Connected!');
+      dbConn = client.db("covid");
+      /*
+      dbConn.collection("casos_1").find({
+        edad: {
+          $gte: 50, //`${startDate}`,
+          $lt: 52//`${endDate}`
+        }
+      }).toArray(function (err, result) {
+        if (err) throw err;
+        //res.send(JSON.stringify(result));
+        console.log(JSON.stringify(result))
+      });
+      */
+      /*
+      var myobj = { name: "Ajeet Kumar", age: "28", address: "Delhi" };
+      const cursor = dbConn.collection('casos_1')
+        .find()
+        .sort({ "id_evento_caso": -1 })
+        .limit(1);
+      
+      const results = await cursor.toArray();
+      if (results.length === 1) {
+        const lastUpdateDate = results[0].ultima_actualizacion;
+        setLast
+        if (isTimeToUpdate(lastUpdateDate)) {
+
+        }
+        dbConn.collection('misc').insertOne(myobj, function (err, res) {
+          if (err) throw err;
+          console.log("1 record inserted");
+          client.close();
+        });
+      }
+      */
+      //client.close();
+    }).catch(err => {
+      console.log(`DB Connection Error: ${err.message}`);
+    });
+    //res.status(200).send({ status: 'Success' });
   } catch (err) {
     console.error(err);
     res.status(504).send({ mensaje: err });
