@@ -4,8 +4,11 @@ const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
 var cors = require('cors')
 
+const http = require('https');
+//var unzip = require('unzip');
+
 // Import required module csvtojson and mongodb packages
-const csvtojson = require('csvtojson');
+//const csvtojson = require('csvtojson');
 const mongodb = require('mongodb');
 
 const PORT = process.env.PORT || 3001;
@@ -20,8 +23,8 @@ app.use(cors());
 app.use(pino);
 
 // PARSEO MAGICO DE JSON DEL BODY
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
+//app.use(bodyParser.json()); // support json encoded bodies
+//app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 
 //DB Connection String
 const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
@@ -208,6 +211,11 @@ app.post("/covid/update", async (req, res) => {
     console.log("POST /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
+
+    const file = fs.createWriteStream("prueba.zip");
+    const request = http.get("https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip", function (response) {
+      response.pipe(file);
+    });
 
     res.status(200).send({ status: 'Success' });
   } catch (err) {

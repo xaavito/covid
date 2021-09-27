@@ -72,7 +72,7 @@ function App() {
   // eslint-disable-next-line
   const [newCases, setNewCases] = useState(0);
   // eslint-disable-next-line
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [lastUpdated, setLastUpdated] = useState();
   // eslint-disable-next-line
   const [newRegistriesAdded, setNewRegistriesAdded] = useState(0);
 
@@ -114,7 +114,7 @@ function App() {
 
   function synchronizeCases() {
     fetch(`http://localhost:3001/covid/update`, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Accept': 'text/html',
         'Content-Type': 'application/json',
@@ -395,7 +395,7 @@ function App() {
                     </tr>
                     <tr>
                       <td>
-                        <label className="font-small">Last import made on {lastUpdated.toDateString}, {newRegistriesAdded} registries added</label>
+                        <label className="font-small">Last import made on {lastUpdated}, {newRegistriesAdded} registries added</label>
                       </td>
                     </tr>
                     <tr>
