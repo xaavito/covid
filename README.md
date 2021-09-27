@@ -16,25 +16,11 @@ npm run dev
 http://localhost:3000/
 ```
 
-## Correr Tests
-```
-npm run test
-```
-
 ## Precondiciones 
 
-### Tener instalado MongoDB 
-```
-https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-20-04-es
-```
-### Correr Docker
+### Correr Docker para lanzar mongo
 ```
 docker-compose up -d
-```
-
-### Conexion a mongo
-```
-mongo -u covid -p covid --
 ```
 
 ### Instalar BD inicial (solo se hace una vez)
@@ -47,4 +33,15 @@ sudo cp filtered.csv /mongo-import-volume
 docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
 ```
 
+## Help
+
+### Correr Tests
+```
+npm run test
+```
+
+### Conexion a mongo (para hacer consultas)
+```
+mongo -u covid -p covid --
+```
 

@@ -121,3 +121,5 @@ dist
 *.csv
 mongo-volume/*
 mongo-import-volume/*
+
+UpdatedData.zip

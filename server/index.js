@@ -212,11 +212,15 @@ app.post("/covid/update", async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    const file = fs.createWriteStream("prueba.zip");
+    const file = fs.createWriteStream("UpdatedData.zip");
     const request = http.get("https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip", function (response) {
       response.pipe(file);
-    });
 
+      response.on('end', function () {
+        console.log("DOwnload Finished");
+      });
+    });
+    
     res.status(200).send({ status: 'Success' });
   } catch (err) {
     console.error(err);
