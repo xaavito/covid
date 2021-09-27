@@ -142,6 +142,35 @@ function App() {
         setErrorMessage(response.mensaje);
       });
 
+    fetch(`http://localhost:3001/covid/update`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'text/html',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3001',
+        // eslint-disable-next-line
+        'Access-Control-Allow-Origin': '*',
+      }
+    }).then((response) => {
+      //console.log(response)
+      setResponse(response.status);
+
+      if (response.status >= 500) {
+        setError(true);
+        setErrorMessage(response.mensaje)
+      }
+      return response.json();
+    })
+      .then((data) => {
+        setLastUpdated(data.lastUpdateDate);
+        setNewRegistriesAdded(data.lastUpdateCases);
+      })
+      .catch((error) => {
+        console.log('error: ' + error);
+        setError(true);
+        setErrorMessage(response.mensaje);
+      });
+
   }
 
   function filtrar() {
@@ -339,7 +368,7 @@ function App() {
 
                       <td className="combo-large">
                         <Select value={province} key="id" options={provinces} onChange={setProvince}
-                          menuPortalTarget={document.querySelector('body')}/>
+                          menuPortalTarget={document.querySelector('body')} />
                       </td>
                     </tr>
                   </tbody>

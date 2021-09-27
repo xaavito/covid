@@ -20,3 +20,11 @@ docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file 
 
 https://stackoverflow.com/questions/42912755/how-to-create-a-db-for-mongodb-container-on-start-up
 
+evaluar esto
+
+var exec = require('child_process').exec;
+var cmd = 'mongoimport -d db_name -c collection_name --type csv --file file.csv --headerline';
+
+exec(cmd, function(error, stdout, stderr) {
+  // do whatever you need during the callback
+});
