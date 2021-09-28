@@ -3,11 +3,45 @@
 ## Bajar Proyecto
 ```
 git clone https://github.com/xaavito/covid.git
+```
+
+## Instalar dependencias Server
+```
 cd covid
+npm install
+```
+
+## Instalar dependencias cliente
+```
+cd client/
+npm install
+```
+
+## Precondiciones 
+
+### Deszipear BD para preloading
+
+```
+unzip filtered.zip
+
+mkdir mongo-import-volume
+
+sudo cp filtered.csv mongo-import-volume
+```
+
+### Correr Docker para lanzar mongo
+```
+docker-compose up -d
+```
+
+### Instalar BD inicial (solo se hace una vez)
+```
+docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
 ```
 
 ## Correr Servidor y Cliente Concurrentemente
 ```
+cd ..
 npm run dev
 ```
 
@@ -16,26 +50,10 @@ npm run dev
 http://localhost:3000/
 ```
 
-## Precondiciones 
-
-### Correr Docker para lanzar mongo
-```
-docker-compose up -d
-```
-
-### Instalar BD inicial (solo se hace una vez)
-
-```
-unzip unzip filtered.zip
-
-sudo cp filtered.csv /mongo-import-volume
-
-docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
-```
-
 ## Help
 
 ### Correr Tests
+***Tener previsamente la BD corriento***
 ```
 npm run test
 ```
@@ -44,4 +62,6 @@ npm run test
 ```
 mongo -u covid -p covid --
 ```
+
+## Experiencia General [Ver](EXPERIENCIA.md)
 
