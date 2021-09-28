@@ -32,31 +32,26 @@ const extract = require('extract-zip')
 
 var dbConn;
 
+// function to determine if it ok to update
 function isTimeToUpdate(lastUpdatedDate) {
   var parts = lastUpdatedDate.split('-');
   // uff This sucks, but needed to be done
   var mydate = new Date(new Date(parts[0], parts[1] - 1, parts[2]).toDateString());
   var today = new Date(new Date().toDateString());
-  //today.setHours(0, 0, 0)
-
-  console.log(today)
-  console.log(mydate)
 
   if (mydate < today) {
-    console.log("isTimeToUpdate true")
     return true;
   }
-  console.log("isTimeToUpdate false")
   return false;
 }
 
+// Parse date to match DB dates.
 function todayParsed() {
   var mydate = new Date().toLocaleDateString('es-ar');
   var strSplitDate = String(mydate).split('/');
   var date = ""
 
   date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
-  console.log(date);
   return date;
 }
 
@@ -68,7 +63,6 @@ app.get("/api", (req, res) => {
 // GET Method that returns new Cases
 app.get("/covid/total", async (req, res) => {
   try {
-    console.log("GET /covid/total");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -98,12 +92,11 @@ app.get("/covid/total", async (req, res) => {
         'clasificacion_resumen': 'Confirmado',
         'fecha_fallecimiento': ''
       }, function (err, results) {
-        console.log(results); // output all records
         res.status(200).send({ newCases: results });
       });
     }).catch(err => {
-      console.log(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: err.message });
+      console.error(`DB Connection Error: ${err.message}`);
+      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
@@ -114,7 +107,6 @@ app.get("/covid/total", async (req, res) => {
 // GET Method that returns new Deaths
 app.get("/covid/deaths", async (req, res) => {
   try {
-    console.log("GET /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     const startDate = req.query.startDate
@@ -123,13 +115,6 @@ app.get("/covid/deaths", async (req, res) => {
     const ageTo = req.query.ageTo
     const sex = req.query.sex
     const province = req.query.province
-
-    console.log(req.query)
-    console.log(req.query.sex)
-
-    if (typeof ageFrom === 'undefined') {
-      console.log("age undefined")
-    }
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true, ignoreUndefined: true
@@ -149,12 +134,11 @@ app.get("/covid/deaths", async (req, res) => {
         'residencia_provincia_id': Number(province) === 1000 ? undefined : Number(province),
         'clasificacion_resumen': 'Confirmado'
       }, function (err, results) {
-        console.log(results); // output all records
         res.status(200).send({ covidDeaths: results });
       });
     }).catch(err => {
-      console.log(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: err.message });
+      console.error(`DB Connection Error: ${err.message}`);
+      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
@@ -165,23 +149,19 @@ app.get("/covid/deaths", async (req, res) => {
 // GET Method that returns last imported added registries
 app.get("/covid/update", async (req, res) => {
   try {
-    console.log("GET /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then(async (client) => {
-      console.log('DB Connected!');
       dbConn = client.db("covid");
 
+      // We search for the collection that holds last updated data
       dbConn.collection('misc').find({}).toArray((err, results) => {
         if (err) throw err;
-        //const results = cursor.toArray();
-        //console.log("adentroooo")
         // If Theres is information we use it.
         if (results.length === 1) {
-          //console.log("hay un caso en misc")
           lastUpdateCases = results[0].lastUpdateCases;
           lastUpdateDate = results[0].lastUpdateDate;
 
@@ -190,7 +170,7 @@ app.get("/covid/update", async (req, res) => {
 
         //if there is no information we gather it.
         if (results.length === 0) {
-          //console.log("no hay un caso en misc, generamos")
+          //Search for the last event by Id_event
           const cursor = dbConn.collection('casos_1')
             .find()
             .sort({ "id_evento_caso": -1 })
@@ -200,17 +180,16 @@ app.get("/covid/update", async (req, res) => {
               if (results.length === 1) {
                 lastUpdateDate = results[0].ultima_actualizacion;
                 lastRecordNumber = results[0].id_evento_caso;
-                //console.log("lastUpdateDate " + lastUpdateDate)
+                
+                // Since there was no information we count total results (that since there is no information is the first import)
                 const cursor = dbConn.collection('casos_1')
                   .count({}, function (err, results) {
-                    //console.log(results); // output all records
                     if (err) throw err;
                     lastUpdateCases = results
 
-                    //console.log("lastUpdateCases " + lastUpdateCases)
-
                     myobj = { lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate, lastRecordNumber: lastRecordNumber }
 
+                    //Insert into misc the information about last updated date, records and id_event
                     dbConn.collection('misc').insertOne(myobj, function (err, res) {
                       if (err) throw err;
                       client.close();
@@ -222,7 +201,8 @@ app.get("/covid/update", async (req, res) => {
         }
       });
     }).catch(err => {
-      console.log(`DB Connection Error: ${err.message}`);
+      console.error(`DB Connection Error: ${err.message}`);
+      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
@@ -233,14 +213,13 @@ app.get("/covid/update", async (req, res) => {
 // POST Method that fires the CSV LOAD
 app.post("/covid/update", async (req, res) => {
   try {
-    console.log("POST /covid/deaths");
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     const filePath = path.join(__dirname, "../UpdatedData.zip")
     const destDir = path.join(__dirname, "../")
 
-    // WORKSSSSSS
+    // First we search for misc data
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
@@ -248,15 +227,13 @@ app.post("/covid/update", async (req, res) => {
 
       dbConn.collection('misc').find({}).toArray((err, results) => {
         if (err) throw err;
-        //const results = cursor.toArray();
-        console.log("adentroooo")
+        
         // If Theres is information we use it.
         if (results.length === 1) {
-          console.log("hay resultados")
-
+          
+          // CHecking if it is time update, if last updated date is less than today, we update
           if (isTimeToUpdate(results[0].lastUpdateDate)) {
-            console.log("time to update!!!!")
-
+            console.log("time to update...")
             // First download file..
             const file = fs.createWriteStream("UpdatedData.zip");
 
@@ -264,18 +241,18 @@ app.post("/covid/update", async (req, res) => {
               response.pipe(file);
 
               response.on('end', async function () {
-                console.log("Download Finished");
                 // On Success we unzip it
-
                 await extract(filePath, { dir: `${destDir}` }, (err) => {
                   if (err) console.error('extraction failed.');
                 });
-
+          
+                // we stream data for better memory handling of the big csv file
                 let stream = fs.createReadStream("Covid19Casos.csv");
                 let csvData = [];
                 let csvStream = fastcsv
                   .parse()
                   .on("data", function (data) {
+                    // If the case is confirmed and the id_event is bigger than the previous one, we push it for import
                     if (data[20] === "Confirmado" && Number(data[0]) > Number(results[0].lastRecordNumber)) {
                       csvData.push({
                         id_evento_caso: data[0],
@@ -307,25 +284,23 @@ app.post("/covid/update", async (req, res) => {
                     }
                   })
                   .on("end", function () {
+                    // We have now traversed the entire file...
                     // remove the first line: header
                     csvData.shift();
-
-                    console.log(csvData);
 
                     mongodb.MongoClient.connect(
                       dbURL,
                       { useNewUrlParser: true, useUnifiedTopology: true },
                       (err, client) => {
                         if (err) throw err;
-
+                        // Bulk import of data
                         client
                           .db("covid")
                           .collection("casos_1")
                           .insertMany(csvData, (err, response) => {
                             if (err) throw err;
 
-                            console.log(`Inserted: ${response.insertedCount} rows`);
-
+                            // We search for the last id_event now
                             dbConn.collection('casos_1')
                               .find()
                               .sort({ "id_evento_caso": -1 })
@@ -333,15 +308,16 @@ app.post("/covid/update", async (req, res) => {
                                 if (err) throw err;
                                 var myobj;
                                 if (results.length === 1) {
-                                  //lastUpdateDate = results[0].ultima_actualizacion;
                                   lastRecordNumber = results[0].id_evento_caso;
 
+                                  // Remove previous misc data
                                   dbConn.collection('misc').deleteMany({}, function (err, res) {
                                     if (err) throw err;
                                   });
 
                                   myobj = { lastUpdateCases: response.insertedCount, lastUpdateDate: todayParsed(), lastRecordNumber: lastRecordNumber }
 
+                                  // new misc data with fresh import
                                   dbConn.collection('misc').insertOne(myobj, function (err, res) {
                                     if (err) throw err;
                                     client.close();
@@ -360,13 +336,14 @@ app.post("/covid/update", async (req, res) => {
           }
           else {
             console.log("well... its no time to update!!!!")
+            res.status(201).send({});
             client.close();
           }
         }
       });
     }).catch(err => {
-      console.log(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: err.message });
+      console.error(`DB Connection Error: ${err.message}`);
+      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
     });
 
   } catch (err) {

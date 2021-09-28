@@ -51,20 +51,22 @@ function App() {
 
   loadingAges();
 
+  updateCases();
+
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
 
-  const [ageFrom, setAgeFrom] = useState(ages[1]);
-  const [ageTo, setAgeTo] = useState(ages[50]);
+  const [ageFrom, setAgeFrom] = useState();
+  const [ageTo, setAgeTo] = useState();
 
-  const [sex, setSex] = useState(sexes[0]);
-  const [province, setProvince] = useState(provinces[1]);
+  const [sex, setSex] = useState();
+  const [province, setProvince] = useState();
 
   // Responses error
   // eslint-disable-next-line
   const [response, setResponse] = useState(null);
   // eslint-disable-next-line
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   // Response Datos
   // eslint-disable-next-line
@@ -83,7 +85,7 @@ function App() {
     var date = ""
 
     date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
-    console.log(date);
+    //console.log(date);
     return date;
   }
 
@@ -108,11 +110,13 @@ function App() {
     if (province[0] != null) {
       qs += `&province=${province[0].value}`
     }
-    console.log("query string resultante " + qs);
+    //console.log("query string resultante " + qs);
     return qs;
   }
 
-  function synchronizeCases() {
+  function updateCases() {
+    let status;
+
     fetch(`http://localhost:3001/covid/update`, {
       method: 'GET',
       headers: {
@@ -122,25 +126,34 @@ function App() {
         // eslint-disable-next-line
         'Access-Control-Allow-Origin': '*',
       }
-    }).then((response) => {
-      //console.log(response)
-      setResponse(response.status);
+    }).then((res) => {
+      status = Number(res.status);
+      setResponse(status);
 
-      if (response.status >= 500) {
+      if (status >= 500) {
         setError(true);
-        setErrorMessage(response.mensaje)
       }
-      return response.json();
+      return res.json();
     })
       .then((data) => {
-        setLastUpdated(data.lastUpdateDate);
-        setNewRegistriesAdded(data.lastUpdateCases);
+        if (status === 200) {
+          setLastUpdated(data.lastUpdateDate);
+          setNewRegistriesAdded(data.lastUpdateCases);
+        }
+        else {
+          setErrorMessage(data.mensaje);
+          return;
+        }
       })
       .catch((error) => {
-        console.log('error: ' + error);
         setError(true);
-        setErrorMessage(response.mensaje);
+        setErrorMessage(error);
       });
+  }
+
+  function synchronizeCases() {
+    setErrorMessage("Sync in place, this may take a few minutes...");
+    let status;
 
     fetch(`http://localhost:3001/covid/update`, {
       method: 'POST',
@@ -151,34 +164,63 @@ function App() {
         // eslint-disable-next-line
         'Access-Control-Allow-Origin': '*',
       }
-    }).then((response) => {
-      //console.log(response)
-      setResponse(response.status);
+    }).then((res) => {
+      status = Number(res.status);
+      setResponse(status);
 
-      if (response.status >= 500) {
+      if (status >= 500) {
         setError(true);
-        setErrorMessage(response.mensaje)
       }
-      return response.json();
+      return res.json();
     })
       .then((data) => {
-        setLastUpdated(data.lastUpdateDate);
-        setNewRegistriesAdded(data.lastUpdateCases);
+        // we have received new data
+        if (status === 200) {
+          setLastUpdated(data.lastUpdateDate);
+          setNewRegistriesAdded(data.lastUpdateCases);
+          setErrorMessage();
+          updateCases();
+        }
+        // no new data
+        else if (status === 201) {
+          setErrorMessage();
+        }
+        else {
+          setErrorMessage(data.mensaje);
+          return;
+        }
       })
       .catch((error) => {
         console.log('error: ' + error);
         setError(true);
-        setErrorMessage(response.mensaje);
+        setErrorMessage(error);
       });
-
   }
 
-  function filtrar() {
+  function filter() {
     if (!startDate || !endDate) {
-      setErrorMessage("Ingresar Fecha desde y Hasta por favor");
+      setErrorMessage("Please select Start Date and End Date");
       return;
     }
-    //console.log(getQueryString())
+
+    if (typeof ageFrom === 'undefined' || typeof ageTo === 'undefined') {
+      setErrorMessage("Please select Age From and Age To");
+      return;
+    }
+
+    if (typeof sex === 'undefined') {
+      setErrorMessage("Please select Sex");
+      return;
+    }
+
+    if (typeof province === 'undefined') {
+      setErrorMessage("Please select Province");
+      return;
+    }
+
+    setErrorMessage("Loading... please wait..");
+
+    let status;
     fetch(`http://localhost:3001/covid/total${getQueryString()}`, {
       method: 'GET',
       headers: {
@@ -188,25 +230,31 @@ function App() {
         // eslint-disable-next-line
         'Access-Control-Allow-Origin': '*',
       }
-    }).then((response) => {
-      //console.log(response)
-      setResponse(response.status);
+    }).then((res) => {
+      status = Number(res.status);
+      setResponse(status);
 
-      if (response.status >= 500) {
+      if (status >= 500) {
         setError(true);
-        setErrorMessage(response.mensaje);
       }
-      return response.json();
+      return res.json();
     })
       .then((data) => {
-        setNewCases(data.newCases)
+        if (status === 200) {
+          setNewCases(data.newCases)
+          setErrorMessage();
+        }
+        else {
+          setErrorMessage(data.mensaje);
+          return;
+        }
       })
       .catch((error) => {
-        console.log('error: ' + error);
+        console.error('error: ' + error);
         setError(true);
         setErrorMessage(response.mensaje);
+        return;
       });
-
 
     fetch(`http://localhost:3001/covid/deaths${getQueryString()}`, {
       method: 'GET',
@@ -217,23 +265,27 @@ function App() {
         // eslint-disable-next-line
         'Access-Control-Allow-Origin': '*',
       }
-    }).then((response) => {
-      //console.log(response)
-      setResponse(response.status);
-
-      if (response.status >= 500) {
+    }).then((res) => {
+      status = Number(res.status);
+      setResponse(status);
+      if (status >= 500) {
         setError(true);
-        setErrorMessage(response.mensaje);
       }
-      return response.json();
+      return res.json();
     })
       .then((data) => {
-        setDeaths(data.covidDeaths)
+        if (status === 200) {
+          setDeaths(data.covidDeaths)
+          setErrorMessage();
+        }
+        else {
+          setErrorMessage(data.mensaje);
+          return;
+        }
       })
       .catch((error) => {
-        console.log('error: ' + error);
         setError(true);
-        setErrorMessage(response.mensaje);
+        setErrorMessage(error);
       });
   }
 
@@ -281,7 +333,7 @@ function App() {
           >
             <Card>
               <CardHeader
-                title={"Filtros"}
+                title={"Filters"}
                 titleTypographyProps={{ align: 'center' }}
                 action={null}
                 subheaderTypographyProps={{
@@ -375,20 +427,20 @@ function App() {
                 </table>
               </CardContent>
               <CardActions>
-                <Button variant="contained" onClick={filtrar}>Filter</Button>
+                <Button variant="contained" onClick={filter}>Filter</Button>
               </CardActions>
             </Card>
           </Grid>
           <Grid
             item
-            key={"Resultados"}
+            key={"Results"}
             xs={12}
             sm={12}
             md={6}
           >
             <Card>
               <CardHeader
-                title={"Resultados"}
+                title={"Results"}
                 titleTypographyProps={{ align: 'center' }}
                 action={null}
                 subheaderTypographyProps={{
