@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha server/test/index.js",
+    "coverage": "nyc --reporter=html mocha server/test/index.js",
     "server": "node server/index.js",
     "client": "npm start --prefix client",
     "build": "cd client && npm install && npm run build",
@@ -36,6 +37,7 @@
     "chai-http": "^4.3.0",
     "concurrently": "^6.2.1",
     "mocha": "^9.1.2",
+    "nyc": "^15.1.0",
     "should": "^13.2.3",
     "supertest": "^6.1.6"
   }
