@@ -123,3 +123,4 @@ mongo-volume/*
 mongo-import-volume/*
 
 UpdatedData.zip
+coverage/*
