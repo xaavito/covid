@@ -30,8 +30,6 @@ const fs = require('fs');
 // Unzipper
 const extract = require('extract-zip')
 
-var dbConn;
-
 // function to determine if it ok to update
 function isTimeToUpdate(lastUpdatedDate) {
   var parts = lastUpdatedDate.split('-');
@@ -72,6 +70,8 @@ app.get("/covid/total", async (req, res) => {
     const ageTo = req.query.ageTo
     const sex = req.query.sex
     const province = req.query.province
+
+    let dbConn;
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true, ignoreUndefined: true
@@ -116,6 +116,8 @@ app.get("/covid/deaths", async (req, res) => {
     const sex = req.query.sex
     const province = req.query.province
 
+    let dbConn;
+
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true, ignoreUndefined: true
     }).then((client) => {
@@ -151,6 +153,8 @@ app.get("/covid/update", async (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
+
+    let dbConn;
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
@@ -219,6 +223,8 @@ app.post("/covid/update", async (req, res) => {
     const filePath = path.join(__dirname, "../UpdatedData.zip")
     const destDir = path.join(__dirname, "../")
 
+    let dbConn;
+    
     // First we search for misc data
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
