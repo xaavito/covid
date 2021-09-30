@@ -180,7 +180,7 @@ app.get("/covid/update", async (req, res) => {
               if (results.length === 1) {
                 lastUpdateDate = results[0].ultima_actualizacion;
                 lastRecordNumber = results[0].id_evento_caso;
-                
+
                 // Since there was no information we count total results (that since there is no information is the first import)
                 const cursor = dbConn.collection('casos_1')
                   .count({}, function (err, results) {
@@ -227,10 +227,10 @@ app.post("/covid/update", async (req, res) => {
 
       dbConn.collection('misc').find({}).toArray((err, results) => {
         if (err) throw err;
-        
+
         // If Theres is information we use it.
         if (results.length === 1) {
-          
+
           // CHecking if it is time update, if last updated date is less than today, we update
           if (isTimeToUpdate(results[0].lastUpdateDate)) {
             console.log("time to update...")
@@ -245,7 +245,7 @@ app.post("/covid/update", async (req, res) => {
                 await extract(filePath, { dir: `${destDir}` }, (err) => {
                   if (err) console.error('extraction failed.');
                 });
-          
+
                 // we stream data for better memory handling of the big csv file
                 let stream = fs.createReadStream("Covid19Casos.csv");
                 let csvData = [];

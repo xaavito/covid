@@ -48,10 +48,11 @@ function loadingAges() {
 }
 
 function App() {
-
   loadingAges();
 
   updateCases();
+
+  const [syncDisabled, setSyncDisabled] = useState(false);
 
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -153,6 +154,7 @@ function App() {
 
   function synchronizeCases() {
     setErrorMessage("Sync in place, this may take a few minutes...");
+    setSyncDisabled(true);
     let status;
 
     fetch(`http://localhost:3001/covid/update`, {
@@ -180,19 +182,23 @@ function App() {
           setNewRegistriesAdded(data.lastUpdateCases);
           setErrorMessage();
           updateCases();
+          setSyncDisabled(false);
         }
         // no new data
         else if (status === 201) {
           setErrorMessage();
+          setSyncDisabled(false);
         }
         else {
           setErrorMessage(data.mensaje);
+          setSyncDisabled(false);
           return;
         }
       })
       .catch((error) => {
         console.log('error: ' + error);
         setError(true);
+        setSyncDisabled(false);
         setErrorMessage(error);
       });
   }
@@ -489,7 +495,7 @@ function App() {
                 </table>
               </CardContent>
               <CardActions>
-                <Button variant="contained" onClick={synchronizeCases}>Synchronize</Button>
+                <Button variant="contained" disabled={syncDisabled} onClick={synchronizeCases}>Synchronize</Button>
               </CardActions>
             </Card>
           </Grid>
