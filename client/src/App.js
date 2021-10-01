@@ -1,55 +1,24 @@
 import * as React from 'react';
 import { useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
-import DatePicker from "react-datepicker";
-import Select from "react-dropdown-select";
+
+import FilterCard from './components/FilterCard';
+import ResultsCard from './components/ResultsCard';
+import CovidBar from './components/CovidBar';
+import MainTitle from './components/MainTitle';
+import Copyright from './components/Copyright';
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
 
-import { sexes, provinces } from "./options"
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Covid Bot
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-var ages = [];
-
-function loadingAges() {
-  if (ages.length === 0) {
-    for (var i = 0; i < 120; i++) {
-      ages.push({
-        label: i,
-        value: i
-      })
-    }
-  }
-}
+import { httpHeaders } from "./options"
 
 function App() {
-  loadingAges();
-
   updateCases();
 
   const [syncDisabled, setSyncDisabled] = useState(false);
@@ -69,6 +38,8 @@ function App() {
   // eslint-disable-next-line
   const [error, setError] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState(null);
+
   // Response Datos
   // eslint-disable-next-line
   const [deaths, setDeaths] = useState(0);
@@ -79,14 +50,12 @@ function App() {
   // eslint-disable-next-line
   const [newRegistriesAdded, setNewRegistriesAdded] = useState(0);
 
-  const [errorMessage, setErrorMessage] = useState(null);
 
   function getParsedDate(strDate) {
     var strSplitDate = String(strDate).split('/');
     var date = ""
 
     date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
-    //console.log(date);
     return date;
   }
 
@@ -120,18 +89,14 @@ function App() {
 
     fetch(`http://localhost:3001/covid/update`, {
       method: 'GET',
-      headers: {
-        'Accept': 'text/html',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3001',
-        // eslint-disable-next-line
-        'Access-Control-Allow-Origin': '*',
-      }
+      headers: httpHeaders
     }).then((res) => {
       status = Number(res.status);
+      //setState({ ...state, response: status });
       setResponse(status);
 
       if (status >= 500) {
+        //setState({ ...state, error: true });
         setError(true);
       }
       return res.json();
@@ -140,13 +105,16 @@ function App() {
         if (status === 200) {
           setLastUpdated(data.lastUpdateDate);
           setNewRegistriesAdded(data.lastUpdateCases);
+          //setState({ ...state, lastUpdateDate: data.lastUpdateDate, lastUpdateCases: data.lastUpdateCases });
         }
         else {
-          setErrorMessage(data.mensaje);
+          //setState({ ...state, errorMessage: data.message });
+          setErrorMessage(data.message);
           return;
         }
       })
       .catch((error) => {
+        //setState({ ...state, error: true, errorMessage: error });
         setError(true);
         setErrorMessage(error);
       });
@@ -159,13 +127,7 @@ function App() {
 
     fetch(`http://localhost:3001/covid/update`, {
       method: 'POST',
-      headers: {
-        'Accept': 'text/html',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3001',
-        // eslint-disable-next-line
-        'Access-Control-Allow-Origin': '*',
-      }
+      headers: httpHeaders
     }).then((res) => {
       status = Number(res.status);
       setResponse(status);
@@ -176,7 +138,6 @@ function App() {
       return res.json();
     })
       .then((data) => {
-        // we have received new data
         if (status === 200) {
           setLastUpdated(data.lastUpdateDate);
           setNewRegistriesAdded(data.lastUpdateCases);
@@ -190,7 +151,7 @@ function App() {
           setSyncDisabled(false);
         }
         else {
-          setErrorMessage(data.mensaje);
+          setErrorMessage(data.message);
           setSyncDisabled(false);
           return;
         }
@@ -227,69 +188,35 @@ function App() {
     setErrorMessage("Loading... please wait..");
 
     let status;
-    fetch(`http://localhost:3001/covid/total${getQueryString()}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'text/html',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3001',
-        // eslint-disable-next-line
-        'Access-Control-Allow-Origin': '*',
-      }
-    }).then((res) => {
-      status = Number(res.status);
-      setResponse(status);
 
-      if (status >= 500) {
-        setError(true);
-      }
-      return res.json();
-    })
-      .then((data) => {
+    Promise.all([fetch(`http://localhost:3001/covid/total${getQueryString()}`, {
+      method: 'GET',
+      headers: httpHeaders
+    }), fetch(`http://localhost:3001/covid/deaths${getQueryString()}`, {
+      method: 'GET',
+      headers: httpHeaders
+    })])
+      .then(([res1, res2]) => {
+        status = Number(res1.status);
+        setResponse(res1.status);
+
+        if (status >= 500) {
+          setError(true);
+        }
+        return Promise.all([res1.json(), res2.json()])
+      })
+      .then(([res1JSON, res2JSON]) => {
         if (status === 200) {
-          setNewCases(data.newCases)
+          setNewCases(res1JSON.newCases);
+          setDeaths(res2JSON.deaths);
           setErrorMessage();
         }
         else {
-          setErrorMessage(data.mensaje);
+          setErrorMessage(res1JSON.message);
           return;
         }
-      })
-      .catch((error) => {
-        console.error('error: ' + error);
-        setError(true);
-        setErrorMessage(response.mensaje);
-        return;
-      });
-
-    fetch(`http://localhost:3001/covid/deaths${getQueryString()}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'text/html',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3001',
-        // eslint-disable-next-line
-        'Access-Control-Allow-Origin': '*',
-      }
-    }).then((res) => {
-      status = Number(res.status);
-      setResponse(status);
-      if (status >= 500) {
-        setError(true);
-      }
-      return res.json();
-    })
-      .then((data) => {
-        if (status === 200) {
-          setDeaths(data.covidDeaths)
-          setErrorMessage();
-        }
-        else {
-          setErrorMessage(data.mensaje);
-          return;
-        }
-      })
-      .catch((error) => {
+      }).catch((err) => {
+        console.log(err);
         setError(true);
         setErrorMessage(error);
       });
@@ -299,35 +226,8 @@ function App() {
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}
-      >
-        <Toolbar sx={{ flexWrap: 'wrap' }}>
-          <Typography variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            Covid Bot by Javier Gonzalez
-          </Typography>
-          <nav>
-            <h3 className="error"> {errorMessage} </h3>
-          </nav>
-        </Toolbar>
-      </AppBar>
-      {/* Hero unit */}
-      <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
-        <Typography
-          component="h1"
-          variant="h2"
-          align="center"
-          color="text.primary"
-          gutterBottom
-        >
-          Covid-bot
-        </Typography>
-
-      </Container>
-      {/* End hero unit */}
+      <CovidBar errorMessage={errorMessage} />
+      <MainTitle />
       <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-end">
           <Grid
@@ -337,105 +237,13 @@ function App() {
             sm={12}
             md={6}
           >
-            <Card>
-              <CardHeader
-                title={"Filters"}
-                titleTypographyProps={{ align: 'center' }}
-                action={null}
-                subheaderTypographyProps={{
-                  align: 'left',
-                }}
-                sx={{
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'light'
-                      ? theme.palette.grey[200]
-                      : theme.palette.grey[700],
-                }}
-              />
-
-              <CardContent>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <label className="filter-font-big">Date</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>From:</label>
-                      </td>
-                      <td>
-                        <DatePicker selected={startDate}
-                          onChange={setStartDate}
-                          placeholderText="Fecha Desde"
-                          dateFormat="dd/MM/yyyy"
-                          value={startDate}
-                          className="combo-large" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>To:</label>
-                      </td>
-                      <td>
-                        <DatePicker selected={endDate}
-                          onChange={setEndDate}
-                          placeholderText="Fecha Hasta"
-                          dateFormat="dd/MM/yyyy"
-                          className="combo-large" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="filter-font-big">Age</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>From:</label>
-                      </td>
-
-                      <td className="combo-large"><Select value={ageFrom} key="id" options={ages} onChange={setAgeFrom} placeholderText="Seleccione una fecha!" /></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>To:</label>
-                      </td>
-
-                      <td className="combo-large"><Select value={ageTo} options={ages} onChange={setAgeTo} placeholderText="Seleccione una fecha!" /></td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="filter-font-big">Others</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Sex:</label>
-                      </td>
-                      <td className="combo-large">
-                        <Select value={sex} options={sexes} onChange={setSex} />
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <label>Province:</label>
-                      </td>
-
-                      <td className="combo-large">
-                        <Select value={province} key="id" options={provinces} onChange={setProvince}
-                          menuPortalTarget={document.querySelector('body')} />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </CardContent>
-              <CardActions>
-                <Button variant="contained" onClick={filter}>Filter</Button>
-              </CardActions>
-            </Card>
+            <FilterCard sex={sex} setSex={setSex}
+              province={province} setProvince={setProvince}
+              ageTo={ageTo} setAgeTo={setAgeTo}
+              ageFrom={ageFrom} setAgeFrom={setAgeFrom}
+              startDate={startDate} setStartDate={setStartDate}
+              endDate={endDate} setEndDate={setEndDate}
+              filter={filter} />
           </Grid>
           <Grid
             item
@@ -444,60 +252,9 @@ function App() {
             sm={12}
             md={6}
           >
-            <Card>
-              <CardHeader
-                title={"Results"}
-                titleTypographyProps={{ align: 'center' }}
-                action={null}
-                subheaderTypographyProps={{
-                  align: 'center',
-                }}
-                sx={{
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'light'
-                      ? theme.palette.grey[200]
-                      : theme.palette.grey[700],
-                }}
-              />
-              <CardContent className="center-aligned">
-                <table className="combo-large">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <label className="font-bigger">{newCases}</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="font-big">Registered Cases</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="font-bigger">{deaths}</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="font-big">Deaths</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label className="font-small">Last import made on {lastUpdated}, {newRegistriesAdded} registries added</label>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="empty-td">
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </CardContent>
-              <CardActions>
-                <Button variant="contained" disabled={syncDisabled} onClick={synchronizeCases}>Synchronize</Button>
-              </CardActions>
-            </Card>
+            <ResultsCard newCases={newCases} deaths={deaths}
+              lastUpdated={lastUpdated} newRegistriesAdded={newRegistriesAdded}
+              syncDisabled={syncDisabled} synchronizeCases={synchronizeCases} />
           </Grid>
         </Grid>
       </Container>
@@ -511,9 +268,6 @@ function App() {
           py: [3, 6],
         }}
       >
-
-        <Grid container spacing={4} justifyContent="space-evenly">
-        </Grid>
         <Copyright sx={{ mt: 5 }} />
       </Container>
       {/* End footer */}

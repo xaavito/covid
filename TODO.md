@@ -28,3 +28,8 @@ var cmd = 'mongoimport -d db_name -c collection_name --type csv --file file.csv 
 exec(cmd, function(error, stdout, stderr) {
   // do whatever you need during the callback
 });
+
+
+
+USAR GRID VIEW EN VEZ DE LOS TABLE
+VER TEMA WORKERS.

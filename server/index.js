@@ -96,11 +96,11 @@ app.get("/covid/total", async (req, res) => {
       });
     }).catch(err => {
       console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
+      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
-    res.status(504).send({ mensaje: err });
+    res.status(504).send({ message: err });
   }
 });
 
@@ -136,15 +136,16 @@ app.get("/covid/deaths", async (req, res) => {
         'residencia_provincia_id': Number(province) === 1000 ? undefined : Number(province),
         'clasificacion_resumen': 'Confirmado'
       }, function (err, results) {
-        res.status(200).send({ covidDeaths: results });
+        console.log("Results " + results)
+        res.status(200).send({ deaths: results });
       });
     }).catch(err => {
       console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
+      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
-    res.status(504).send({ mensaje: err });
+    res.status(504).send({ message: err });
   }
 });
 
@@ -206,11 +207,11 @@ app.get("/covid/update", async (req, res) => {
       });
     }).catch(err => {
       console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
+      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
     });
   } catch (err) {
     console.error(err);
-    res.status(504).send({ mensaje: err });
+    res.status(504).send({ message: err });
   }
 });
 
@@ -349,12 +350,12 @@ app.post("/covid/update", async (req, res) => {
       });
     }).catch(err => {
       console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ mensaje: `DB Connection Error: ${err.message}` });
+      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
     });
 
   } catch (err) {
     console.error(err);
-    res.status(504).send({ mensaje: err });
+    res.status(504).send({ message: err });
   }
 });
 
