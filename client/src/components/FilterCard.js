@@ -51,95 +51,68 @@ export default function FilterCard(props) {
 
       <CardContent>
         <Grid container spacing={2}>
-          <Grid item xs={8}>
-            xs=8
+          <Grid item xs={12}>
+            <label className="filter-font-big">Date</label>
           </Grid>
-          <Grid item xs={4}>
-            xs=4
+          <Grid item xs={3}>
+            <label>From:</label>
           </Grid>
-          <Grid item xs={4}>
-            xs=4
+          <Grid item xs={9}>
+            <DatePicker selected={props.startDate}
+              placeholderText="Date from"
+              onChange={props.setStartDate}
+              dateFormat="dd/MM/yyyy"
+              value={props.startDate}
+              className="combo-large" />
           </Grid>
-          <Grid item xs={8}>
-            xs=8
+
+          <Grid item xs={3}>
+            <label>To:</label>
+          </Grid>
+          <Grid item xs={9}>
+            <DatePicker selected={props.endDate}
+              placeholderText="Date to"
+              onChange={props.setEndDate}
+              dateFormat="dd/MM/yyyy"
+              className="combo-large" />
+          </Grid>
+
+          <Grid item xs={12}>
+            <label className="filter-font-big">Age</label>
+          </Grid>
+          <Grid item xs={3}>
+            <label>From:</label>
+          </Grid>
+          <Grid item xs={9}>
+            <Select value={props.ageFrom} key="id" options={ages} onChange={props.setAgeFrom} placeholderText="Seleccione una fecha!" />
+          </Grid>
+
+          <Grid item xs={3}>
+            <label>To:</label>
+          </Grid>
+          <Grid item xs={9}>
+            <Select value={props.ageTo} options={ages} onChange={props.setAgeTo} placeholderText="Seleccione una fecha!" />
+          </Grid>
+
+          <Grid item xs={12}>
+            <label className="filter-font-big">Others</label>
+          </Grid>
+
+          <Grid item xs={3}>
+            <label>Sex:</label>
+          </Grid>
+          <Grid item xs={9}>
+            <Select value={props.sex} options={sexes} onChange={props.setSex} />
+          </Grid>
+
+
+          <Grid item xs={3}>
+            <label>Province:</label>
+          </Grid>
+          <Grid item xs={9}>
+            <Select value={props.province} key="id" options={provinces} onChange={props.setProvince} />
           </Grid>
         </Grid>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <label className="filter-font-big">Date</label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>From:</label>
-              </td>
-              <td>
-                <DatePicker selected={props.startDate}
-                  placeholderText="Date from"
-                  onChange={props.setStartDate}
-                  dateFormat="dd/MM/yyyy"
-                  value={props.startDate}
-                  className="combo-large" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>To:</label>
-              </td>
-              <td>
-                <DatePicker selected={props.endDate}
-                  placeholderText="Date to"
-                  onChange={props.setEndDate}
-                  dateFormat="dd/MM/yyyy"
-                  className="combo-large" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label className="filter-font-big">Age</label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>From:</label>
-              </td>
-
-              <td className="combo-large"><Select value={props.ageFrom} key="id" options={ages} onChange={props.setAgeFrom} placeholderText="Seleccione una fecha!" /></td>
-            </tr>
-            <tr>
-              <td>
-                <label>To:</label>
-              </td>
-
-              <td className="combo-large"><Select value={props.ageTo} options={ages} onChange={props.setAgeTo} placeholderText="Seleccione una fecha!" /></td>
-            </tr>
-            <tr>
-              <td>
-                <label className="filter-font-big">Others</label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label>Sex:</label>
-              </td>
-              <td className="combo-large">
-                <Select value={props.sex} options={sexes} onChange={props.setSex} />
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <label>Province:</label>
-              </td>
-
-              <td className="combo-large">
-                <Select value={props.province} key="id" options={provinces} onChange={props.setProvince} />
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </CardContent>
       <CardActions>
         <Button variant="contained" onClick={props.filter}>Filter</Button>
