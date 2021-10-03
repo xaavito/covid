@@ -53,6 +53,10 @@ function todayParsed() {
   return date;
 }
 
+function handleError(err, res) {
+  if (err) throw err;
+}
+
 // Handle GET requests to /api route
 app.get("/api", (req, res) => {
   res.json({ message: "Hello from server!" });
@@ -64,12 +68,7 @@ app.get("/covid/total", async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    const startDate = req.query.startDate
-    const endDate = req.query.endDate
-    const ageFrom = req.query.ageFrom
-    const ageTo = req.query.ageTo
-    const sex = req.query.sex
-    const province = req.query.province
+    const params = req.query;
 
     let dbConn;
 
@@ -80,15 +79,15 @@ app.get("/covid/total", async (req, res) => {
 
       dbConn.collection('casos_1').count({
         'edad': {
-          $gte: Number(ageFrom),
-          $lt: Number(ageTo)
+          $gte: Number(params.ageFrom),
+          $lt: Number(params.ageTo)
         },
-        'sexo': sex === 'T' ? undefined : sex,
+        'sexo': params.sex === 'T' ? undefined : params.sex,
         'fecha_diagnostico': {
-          $gte: startDate,
-          $lt: endDate
+          $gte: params.startDate,
+          $lt: params.endDate
         },
-        'residencia_provincia_id': Number(province) === 1000 ? undefined : Number(province),
+        'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
         'clasificacion_resumen': 'Confirmado',
         'fecha_fallecimiento': ''
       }, function (err, results) {
@@ -109,12 +108,7 @@ app.get("/covid/deaths", async (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    const startDate = req.query.startDate
-    const endDate = req.query.endDate
-    const ageFrom = req.query.ageFrom
-    const ageTo = req.query.ageTo
-    const sex = req.query.sex
-    const province = req.query.province
+    const params = req.query;
 
     let dbConn;
 
@@ -125,15 +119,15 @@ app.get("/covid/deaths", async (req, res) => {
 
       dbConn.collection('casos_1').count({
         'edad': {
-          $gte: Number(ageFrom),
-          $lt: Number(ageTo)
+          $gte: Number(params.ageFrom),
+          $lt: Number(params.ageTo)
         },
-        'sexo': sex === 'T' ? undefined : sex,
+        'sexo': params.sex === 'T' ? undefined : params.sex,
         'fecha_fallecimiento': {
-          $gte: startDate,
-          $lt: endDate
+          $gte: params.startDate,
+          $lt: params.endDate
         },
-        'residencia_provincia_id': Number(province) === 1000 ? undefined : Number(province),
+        'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
         'clasificacion_resumen': 'Confirmado'
       }, function (err, results) {
         console.log("Results " + results)
@@ -225,7 +219,7 @@ app.post("/covid/update", async (req, res) => {
     const destDir = path.join(__dirname, "../")
 
     let dbConn;
-    
+
     // First we search for misc data
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
@@ -318,9 +312,7 @@ app.post("/covid/update", async (req, res) => {
                                   lastRecordNumber = results[0].id_evento_caso;
 
                                   // Remove previous misc data
-                                  dbConn.collection('misc').deleteMany({}, function (err, res) {
-                                    if (err) throw err;
-                                  });
+                                  dbConn.collection('misc').deleteMany({}, handleError);
 
                                   myobj = { lastUpdateCases: response.insertedCount, lastUpdateDate: todayParsed(), lastRecordNumber: lastRecordNumber }
 

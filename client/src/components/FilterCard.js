@@ -15,6 +15,8 @@ import { sexes, provinces } from "../options"
 
 import Grid from '@mui/material/Grid';
 
+import "../App.css";
+
 export default function FilterCard(props) {
 
   var ages = [];
@@ -51,13 +53,13 @@ export default function FilterCard(props) {
 
       <CardContent>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} className="filter-grid-item">
             <label className="filter-font-big">Date</label>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>From:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <DatePicker selected={props.startDate}
               placeholderText="Date from"
               onChange={props.setStartDate}
@@ -66,10 +68,10 @@ export default function FilterCard(props) {
               className="combo-large" />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>To:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <DatePicker selected={props.endDate}
               placeholderText="Date to"
               onChange={props.setEndDate}
@@ -77,39 +79,39 @@ export default function FilterCard(props) {
               className="combo-large" />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} className="filter-grid-item">
             <label className="filter-font-big">Age</label>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>From:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <Select value={props.ageFrom} key="id" options={ages} onChange={props.setAgeFrom} placeholderText="Seleccione una fecha!" />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>To:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <Select value={props.ageTo} options={ages} onChange={props.setAgeTo} placeholderText="Seleccione una fecha!" />
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} className="filter-grid-item">
             <label className="filter-font-big">Others</label>
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>Sex:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <Select value={props.sex} options={sexes} onChange={props.setSex} />
           </Grid>
 
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className="filter-grid-item">
             <label>Province:</label>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={9} className="filter-grid-item">
             <Select value={props.province} key="id" options={provinces} onChange={props.setProvince} />
           </Grid>
         </Grid>

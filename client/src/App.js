@@ -2,16 +2,13 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
 
 import GlobalStyles from '@mui/material/GlobalStyles';
-import Container from '@mui/material/Container';
 
-import FilterCard from './components/FilterCard';
-import ResultsCard from './components/ResultsCard';
 import CovidBar from './components/CovidBar';
 import MainTitle from './components/MainTitle';
-import Copyright from './components/Copyright';
+import Footer from './components/Footer';
+import MainBody from './components/MainBody';
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
@@ -228,49 +225,16 @@ function App() {
       <CssBaseline />
       <CovidBar errorMessage={errorMessage} />
       <MainTitle />
-      <Container maxWidth="md" component="main">
-        <Grid container spacing={5} alignItems="flex-end">
-          <Grid
-            item
-            key={"Prueba"}
-            xs={12}
-            sm={12}
-            md={6}
-          >
-            <FilterCard sex={sex} setSex={setSex}
-              province={province} setProvince={setProvince}
-              ageTo={ageTo} setAgeTo={setAgeTo}
-              ageFrom={ageFrom} setAgeFrom={setAgeFrom}
-              startDate={startDate} setStartDate={setStartDate}
-              endDate={endDate} setEndDate={setEndDate}
-              filter={filter} />
-          </Grid>
-          <Grid
-            item
-            key={"Results"}
-            xs={12}
-            sm={12}
-            md={6}
-          >
-            <ResultsCard newCases={newCases} deaths={deaths}
-              lastUpdated={lastUpdated} newRegistriesAdded={newRegistriesAdded}
-              syncDisabled={syncDisabled} synchronizeCases={synchronizeCases} />
-          </Grid>
-        </Grid>
-      </Container>
-      {/* Footer */}
-      <Container
-        maxWidth="md"
-        component="footer"
-        sx={{
-          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-          mt: 8,
-          py: [3, 6],
-        }}
-      >
-        <Copyright sx={{ mt: 5 }} />
-      </Container>
-      {/* End footer */}
+      <MainBody sex={sex} setSex={setSex}
+        province={province} setProvince={setProvince}
+        ageTo={ageTo} setAgeTo={setAgeTo}
+        ageFrom={ageFrom} setAgeFrom={setAgeFrom}
+        startDate={startDate} setStartDate={setStartDate}
+        endDate={endDate} setEndDate={setEndDate}
+        filter={filter} newCases={newCases} deaths={deaths}
+        lastUpdated={lastUpdated} newRegistriesAdded={newRegistriesAdded}
+        syncDisabled={syncDisabled} synchronizeCases={synchronizeCases} />
+      <Footer />
     </React.Fragment >
   );
 }

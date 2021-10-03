@@ -31,5 +31,15 @@ exec(cmd, function(error, stdout, stderr) {
 
 
 
-USAR GRID VIEW EN VEZ DE LOS TABLE
-VER TEMA WORKERS.
+VER TEMA WORKERS en el sync
+https://blog.logrocket.com/use-cases-for-node-workers/
+https://nodejs.org/api/worker_threads.html
+https://nodesource.com/blog/worker-threads-nodejs/
+https://livecodestream.dev/post/how-to-work-with-worker-threads-in-nodejs/
+
+Funciones y callback hell 
+
+https://stackabuse.com/avoiding-callback-hell-in-node-js/
+
+Ver de liquidar todo el español
+
