@@ -239,6 +239,6 @@ function App() {
   );
 }
 
-export default function Pricing() {
+export default function CovidBot() {
   return <App />;
 }

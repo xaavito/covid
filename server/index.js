@@ -8,15 +8,17 @@ const http = require('https');
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
 
-const fastcsv = require("fast-csv");
-
 const PORT = process.env.PORT || 3001;
+
+const { Worker } =  require("worker_threads");
+
+const worker = new Worker("./server/workers/asyncDataLoad.js");
 
 const app = express();
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-// PARA EVITAR EL TEMA DE LA RESTRICCION DE DONDE LE PEGAN MUCHO BARDO CON LOCALHOST
+// Avoid localhost connection
 app.use(cors());
 // PINO LOGGER
 app.use(pino);
@@ -221,6 +223,17 @@ app.post("/covid/update", async (req, res) => {
     let dbConn;
 
     // First we search for misc data
+    worker.on("message", result => {
+      console.log(`${result.num}th Fibonacci Number: ${result.fib}`);
+    });
+    
+    worker.on("error", error => {
+      console.log(error);
+    });
+    
+    worker.postMessage({num: 40});
+    worker.postMessage({num: 12});
+    /*
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     }).then((client) => {
@@ -344,6 +357,7 @@ app.post("/covid/update", async (req, res) => {
       console.error(`DB Connection Error: ${err.message}`);
       res.status(504).send({ message: `DB Connection Error: ${err.message}` });
     });
+    */
 
   } catch (err) {
     console.error(err);
