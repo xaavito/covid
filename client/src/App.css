@@ -79,3 +79,7 @@
     opacity: 0;
   }
 }
+
+.MuiGrid-item.filter-grid-item {
+  padding-top: 6px !important;
+}

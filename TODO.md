@@ -28,3 +28,18 @@ var cmd = 'mongoimport -d db_name -c collection_name --type csv --file file.csv 
 exec(cmd, function(error, stdout, stderr) {
   // do whatever you need during the callback
 });
+
+
+
+VER TEMA WORKERS en el sync
+https://blog.logrocket.com/use-cases-for-node-workers/
+https://nodejs.org/api/worker_threads.html
+https://nodesource.com/blog/worker-threads-nodejs/
+https://livecodestream.dev/post/how-to-work-with-worker-threads-in-nodejs/
+
+Funciones y callback hell 
+
+https://stackabuse.com/avoiding-callback-hell-in-node-js/
+
+Ver de liquidar todo el español
+
