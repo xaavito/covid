@@ -48,6 +48,36 @@ function todayParsed() {
     return date;
 }
 
+open = (url) => {
+    return new Promise((resolve, reject) => {
+        mongodb.MongoClient.connect(dbURL, (err, client) => { //Use "client" insted of "db" in the new MongoDB version
+            if (err) {
+                reject(err)
+            } else {
+                resolve({
+                    client
+                });
+            };
+        });
+    });
+};
+
+create = (client) => {
+    return new Promise((resolve, reject) => {
+        db = client.db("covid"); //Get the "db" variable from "client"
+        db.collection("casos_1").find({}).toArray((err, results) => {
+            if (err) { reject(err) }
+            else {
+                resolve({
+                    lastUpdateDate: results[0].lastUpdateDate, //Add more variables if you want
+                    client
+                });
+            }
+        });
+    });
+};
+
+
 function dbCall(data) {
     let dataStruct = {
         lastUpdateCases: "2000",
@@ -56,8 +86,8 @@ function dbCall(data) {
         errorMessage: data,
         status: 200
     }
-    //console.log(dataStruct);
-    //return dataStruct;
+
+    //https://stackoverflow.com/questions/37911838/how-to-use-mongodb-with-promises-in-node-js
 
     let dbConn;
 
@@ -153,7 +183,7 @@ function dbCall(data) {
                                                         lastRecordNumber = results[0].id_evento_caso;
 
                                                         console.log("Worker thread: Connection 2 OK")
-                                                        
+
                                                         // Remove previous misc data
                                                         dbConn.collection('misc').deleteMany({}, function (err, res) {
                                                             if (err) throw err;
