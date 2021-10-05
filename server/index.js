@@ -3,16 +3,12 @@ const express = require("express");
 const pino = require('express-pino-logger')();
 var cors = require('cors')
 
-const http = require('https');
-
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
 
 const PORT = process.env.PORT || 3001;
 
-const { Worker } =  require("worker_threads");
-
-const worker = new Worker("./server/workers/asyncDataLoad.js");
+const { Worker } = require("worker_threads");
 
 const app = express();
 // Have Node serve the files for our built React app
@@ -25,39 +21,6 @@ app.use(pino);
 
 //DB Connection String
 const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
-
-//test
-const fs = require('fs');
-
-// Unzipper
-const extract = require('extract-zip')
-
-// function to determine if it ok to update
-function isTimeToUpdate(lastUpdatedDate) {
-  var parts = lastUpdatedDate.split('-');
-  // uff This sucks, but needed to be done
-  var mydate = new Date(new Date(parts[0], parts[1] - 1, parts[2]).toDateString());
-  var today = new Date(new Date().toDateString());
-
-  if (mydate < today) {
-    return true;
-  }
-  return false;
-}
-
-// Parse date to match DB dates.
-function todayParsed() {
-  var mydate = new Date().toLocaleDateString('es-ar');
-  var strSplitDate = String(mydate).split('/');
-  var date = ""
-
-  date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
-  return date;
-}
-
-function handleError(err, res) {
-  if (err) throw err;
-}
 
 // Handle GET requests to /api route
 app.get("/api", (req, res) => {
@@ -210,154 +173,83 @@ app.get("/covid/update", async (req, res) => {
     res.status(504).send({ message: err });
   }
 });
-
+/*
+var synchronize = (WorkerData) => {
+  console.log("synchronize")
+  return new Promise((resolve, reject) => {
+    const worker = new Worker("./server/workers/asyncDataLoad.js", { WorkerData });
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) => {
+      if (code !== 0)
+        reject(new Error(`stopped with  ${code} exit code`));
+    })
+    worker.postMessage(WorkerData);
+  })
+}
+*/
+/*
+var runSynchronize = async () => {
+  console.log("runSynchronize")
+  const result = await synchronize("nadaaa");
+  console.log(result)
+  return result;
+  //console.log(JSON.stringify(result));
+  //return result;
+}
+*/
 // POST Method that fires the CSV LOAD
 app.post("/covid/update", async (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-
-    const filePath = path.join(__dirname, "../UpdatedData.zip")
-    const destDir = path.join(__dirname, "../")
-
-    let dbConn;
-
-    // First we search for misc data
-    worker.on("message", result => {
-      console.log(`${result.num}th Fibonacci Number: ${result.fib}`);
-    });
+    console.log("covid/update");
+    const worker = new Worker("./server/workers/asyncDataLoad.js");
+    /*
+    runSynchronize()
+      .then(function (result) {
+        if (result.status === 200) {
+          console.log("200")
+          res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
+        }
+        if (result.status === 201) {
+          console.log("201")
+          res.status(result.status).send({});
+        }
+        if (result.status === 504) {
+          console.log("504")
+          res.status(result.status).send({ message: result.errorMessage });
+        }
+      })
+      .catch(err => console.error(err));
+      */
     
+    worker.on("message", result => {
+      /*
+      console.log("Backend " + result)
+      if (result.status === 200) {
+        console.log("200")
+        res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
+      }
+      if (result.status === 201) {
+        console.log("201")
+        res.status(result.status).send({});
+      }
+      if (result.status === 504) {
+        console.log("504")
+        res.status(result.status).send({ message: result.errorMessage });
+      }*/
+    });
+
     worker.on("error", error => {
       console.log(error);
     });
-    
-    worker.postMessage({num: 40});
-    worker.postMessage({num: 12});
-    /*
-    mongodb.MongoClient.connect(dbURL, {
-      useUnifiedTopology: true,
-    }).then((client) => {
-      dbConn = client.db("covid");
 
-      dbConn.collection('misc').find({}).toArray((err, results) => {
-        if (err) throw err;
+    worker.on("exit", exitCode => {
+      console.log(exitCode);
+    })
 
-        // If Theres is information we use it.
-        if (results.length === 1) {
-
-          // CHecking if it is time update, if last updated date is less than today, we update
-          if (isTimeToUpdate(results[0].lastUpdateDate)) {
-            console.log("time to update...")
-            // First download file..
-            const file = fs.createWriteStream("UpdatedData.zip");
-
-            const request = http.get("https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip", function (response) {
-              response.pipe(file);
-
-              response.on('end', async function () {
-                // On Success we unzip it
-                await extract(filePath, { dir: `${destDir}` }, (err) => {
-                  if (err) console.error('extraction failed.');
-                });
-
-                // we stream data for better memory handling of the big csv file
-                let stream = fs.createReadStream("Covid19Casos.csv");
-                let csvData = [];
-                let csvStream = fastcsv
-                  .parse()
-                  .on("data", function (data) {
-                    // If the case is confirmed and the id_event is bigger than the previous one, we push it for import
-                    if (data[20] === "Confirmado" && Number(data[0]) > Number(results[0].lastRecordNumber)) {
-                      csvData.push({
-                        id_evento_caso: data[0],
-                        sexo: data[1],
-                        edad: data[2],
-                        edad_años_meses: data[3],
-                        residencia_pais_nombre: data[4],
-                        residencia_provincia_nombre: data[5],
-                        residencia_departamento_nombre: data[6],
-                        carga_provincia_nombre: data[7],
-                        fecha_inicio_sintomas: data[8],
-                        fecha_apertura: data[9],
-                        sepi_apertura: data[10],
-                        fecha_internacion: data[11],
-                        cuidado_intensivo: data[12],
-                        fecha_cui_intensivo: data[13],
-                        fallecido: data[14],
-                        fecha_fallecimiento: data[15],
-                        asistencia_respiratoria_mecanica: data[16],
-                        carga_provincia_id: data[17],
-                        origen_financiamiento: data[18],
-                        clasificacion: data[19],
-                        clasificacion_resumen: data[20],
-                        residencia_provincia_id: data[21],
-                        fecha_diagnostico: data[22],
-                        residencia_departamento_id: data[23],
-                        ultima_actualizacion: data[24]
-                      });
-                    }
-                  })
-                  .on("end", function () {
-                    // We have now traversed the entire file...
-                    // remove the first line: header
-                    csvData.shift();
-
-                    mongodb.MongoClient.connect(
-                      dbURL,
-                      { useNewUrlParser: true, useUnifiedTopology: true },
-                      (err, client) => {
-                        if (err) throw err;
-                        // Bulk import of data
-                        client
-                          .db("covid")
-                          .collection("casos_1")
-                          .insertMany(csvData, (err, response) => {
-                            if (err) throw err;
-
-                            // We search for the last id_event now
-                            dbConn.collection('casos_1')
-                              .find()
-                              .sort({ "id_evento_caso": -1 })
-                              .limit(1).toArray((err, results) => {
-                                if (err) throw err;
-                                var myobj;
-                                if (results.length === 1) {
-                                  lastRecordNumber = results[0].id_evento_caso;
-
-                                  // Remove previous misc data
-                                  dbConn.collection('misc').deleteMany({}, handleError);
-
-                                  myobj = { lastUpdateCases: response.insertedCount, lastUpdateDate: todayParsed(), lastRecordNumber: lastRecordNumber }
-
-                                  // new misc data with fresh import
-                                  dbConn.collection('misc').insertOne(myobj, function (err, res) {
-                                    if (err) throw err;
-                                    client.close();
-                                  });
-                                  res.status(200).send({ lastUpdateCases: response.insertedCount, lastUpdateDate: todayParsed() });
-                                }
-                              });
-
-                          });
-                      }
-                    );
-                  });
-                stream.pipe(csvStream);
-              });
-            });
-          }
-          else {
-            console.log("well... its no time to update!!!!")
-            res.status(201).send({});
-            client.close();
-          }
-        }
-      });
-    }).catch(err => {
-      console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
-    });
-    */
+    worker.postMessage("ndada");
 
   } catch (err) {
     console.error(err);

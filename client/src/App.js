@@ -113,7 +113,7 @@ function App() {
       .catch((error) => {
         //setState({ ...state, error: true, errorMessage: error });
         setError(true);
-        setErrorMessage(error);
+        setErrorMessage(JSON.stringify(error));
       });
   }
 
@@ -136,18 +136,21 @@ function App() {
     })
       .then((data) => {
         if (status === 200) {
+          console.log("200 " + data.lastUpdateDate)
           setLastUpdated(data.lastUpdateDate);
           setNewRegistriesAdded(data.lastUpdateCases);
           setErrorMessage();
-          updateCases();
+          //updateCases();
           setSyncDisabled(false);
         }
         // no new data
         else if (status === 201) {
+          console.log("201")
           setErrorMessage();
           setSyncDisabled(false);
         }
         else {
+          console.log("504")
           setErrorMessage(data.message);
           setSyncDisabled(false);
           return;
@@ -157,7 +160,7 @@ function App() {
         console.log('error: ' + error);
         setError(true);
         setSyncDisabled(false);
-        setErrorMessage(error);
+        setErrorMessage(JSON.stringify(error));
       });
   }
 
@@ -215,7 +218,7 @@ function App() {
       }).catch((err) => {
         console.log(err);
         setError(true);
-        setErrorMessage(error);
+        setErrorMessage(JSON.stringify(err));
       });
   }
 
