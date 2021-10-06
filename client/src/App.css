@@ -38,6 +38,9 @@
 }
 .combo-large {
   width: 100%;
+  min-height: 36px;
+  border-color: grey;
+  border-width: 1px;
 }
 
 .font-bigger {

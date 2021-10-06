@@ -9,7 +9,8 @@ import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
 
 import DatePicker from "react-datepicker";
-import Select from "react-dropdown-select";
+import Select from 'react-select';
+//import Select from "react-dropdown-select";
 
 import { sexes, provinces } from "../options"
 
@@ -86,14 +87,16 @@ export default function FilterCard(props) {
             <label>From:</label>
           </Grid>
           <Grid item xs={9} className="filter-grid-item">
-            <Select value={props.ageFrom} key="id" options={ages} onChange={props.setAgeFrom} placeholderText="Seleccione una fecha!" />
+            <Select value={props.ageFrom} key="id" options={ages} onChange={props.setAgeFrom} placeholderText="Seleccione una fecha!" menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
           </Grid>
 
           <Grid item xs={3} className="filter-grid-item">
             <label>To:</label>
           </Grid>
           <Grid item xs={9} className="filter-grid-item">
-            <Select value={props.ageTo} options={ages} onChange={props.setAgeTo} placeholderText="Seleccione una fecha!" />
+            <Select value={props.ageTo} options={ages} onChange={props.setAgeTo} placeholderText="Seleccione una fecha!" menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
           </Grid>
 
           <Grid item xs={12} className="filter-grid-item">
@@ -104,7 +107,8 @@ export default function FilterCard(props) {
             <label>Sex:</label>
           </Grid>
           <Grid item xs={9} className="filter-grid-item">
-            <Select value={props.sex} options={sexes} onChange={props.setSex} />
+            <Select value={props.sex} options={sexes} onChange={props.setSex} menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
           </Grid>
 
 
@@ -112,7 +116,8 @@ export default function FilterCard(props) {
             <label>Province:</label>
           </Grid>
           <Grid item xs={9} className="filter-grid-item">
-            <Select value={props.province} key="id" options={provinces} onChange={props.setProvince} />
+            <Select value={props.province} key="id" options={provinces} onChange={props.setProvince} menuPortalTarget={document.body}
+              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }} />
           </Grid>
         </Grid>
       </CardContent>

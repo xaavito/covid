@@ -31,15 +31,11 @@ exec(cmd, function(error, stdout, stderr) {
 
 
 
-VER TEMA WORKERS en el sync
+VER TEMA WORKERS sync o con callback, eso no funca.
 https://blog.logrocket.com/use-cases-for-node-workers/
 https://nodejs.org/api/worker_threads.html
 https://nodesource.com/blog/worker-threads-nodejs/
 https://livecodestream.dev/post/how-to-work-with-worker-threads-in-nodejs/
-
-Funciones y callback hell 
-
-https://stackabuse.com/avoiding-callback-hell-in-node-js/
 
 Ver de liquidar todo el español
 

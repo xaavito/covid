@@ -64,18 +64,18 @@ function App() {
     if (endDate != null) {
       qs += `&endDate=${getParsedDate(endDate.toLocaleDateString('es-ar'))}`
     }
-    //console.log(ageFrom[0])
-    if (ageFrom[0] != null) {
-      qs += `&ageFrom=${ageFrom[0].value}`
+    //console.log(ageFrom.value);
+    if (ageFrom != null) {
+      qs += `&ageFrom=${ageFrom.value}`
     }
-    if (ageTo[0] != null) {
-      qs += `&ageTo=${ageTo[0].value}`
+    if (ageTo != null) {
+      qs += `&ageTo=${ageTo.value}`
     }
-    if (sex[0] != null) {
-      qs += `&sex=${sex[0].value}`
+    if (sex != null) {
+      qs += `&sex=${sex.value}`
     }
-    if (province[0] != null) {
-      qs += `&province=${province[0].value}`
+    if (province != null) {
+      qs += `&province=${province.value}`
     }
     //console.log("query string resultante " + qs);
     return qs;
