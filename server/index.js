@@ -17,7 +17,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 // Avoid localhost connection
 app.use(cors());
 // PINO LOGGER
-app.use(pino);
+//app.use(pino);
 
 //DB Connection String
 const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
@@ -56,6 +56,7 @@ app.get("/covid/total", async (req, res) => {
         'clasificacion_resumen': 'Confirmado',
         'fecha_fallecimiento': ''
       }, function (err, results) {
+        console.log("Cases " + results)
         res.status(200).send({ newCases: results });
       });
     }).catch(err => {
@@ -95,7 +96,7 @@ app.get("/covid/deaths", async (req, res) => {
         'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
         'clasificacion_resumen': 'Confirmado'
       }, function (err, results) {
-        console.log("Results " + results)
+        console.log("Deaths " + results)
         res.status(200).send({ deaths: results });
       });
     }).catch(err => {
@@ -224,9 +225,9 @@ app.post("/covid/update", async (req, res) => {
       .catch(err => console.error(err));
       */
     
-    worker.on("message", result => {
+    worker.once("message", result => {
+      console.log("Backend " + JSON.stringify(result))
       /*
-      console.log("Backend " + result)
       if (result.status === 200) {
         console.log("200")
         res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
