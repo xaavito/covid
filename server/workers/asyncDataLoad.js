@@ -30,10 +30,7 @@ let dataStruct = {
 }
 
 parentPort.on("message", (data) => {
-    //console.log("******* llegue con " + data)
-    //const result = dbCall();
-    //console.log("******* " + result)
-    parentPort.postMessage(dbCall(data));
+    dbCall(data);
 });
 
 // function to determine if it ok to update
@@ -74,7 +71,6 @@ open = () => {
 
 getMiscData = (results) => {
     return new Promise((resolve, reject) => {
-        //console.log(JSON.stringify(results))
         if (results.length === 1) {
             if (isTimeToUpdate(results[0].lastUpdateDate)) {
                 resolve({
@@ -163,40 +159,28 @@ processFile = (results) => {
 function dbCall(data) {
     //https://stackoverflow.com/questions/37911838/how-to-use-mongodb-with-promises-in-node-js
 
-    //let dbConn;
-
-    console.log(destDir)
-    console.log(filePath)
-
     let database;
     let clientMain;
     let myObj;
     let lastRecordNumber;
     let insertedCount;
-    //let dataStruct;
-
 
     open()
         .then((client) => {
-            console.log("1")
             clientMain = client
             database = client.db("covid");
             return database.collection("misc").find({}).toArray();
         })
         .then((results) => {
-            console.log("1bis")
             return getMiscData(results)
         })
         .then((results) => {
-            console.log("2")
             return processFile(results)
         })
         .then((results) => {
-            console.log("3")
             return database.collection("casos_1").insertMany(results);
         })
         .then((results) => {
-            console.log("4")
             insertedCount = results.insertedCount
             return database.collection('casos_1')
                 .find()
@@ -204,17 +188,14 @@ function dbCall(data) {
                 .limit(1)
         })
         .then((result) => {
-            console.log("5")
             lastRecordNumber = result.id_evento_caso;
             return database.collection('misc').deleteMany({});
         })
         .then((result) => {
-            console.log("6")
             myObj = { lastUpdateCases: insertedCount, lastUpdateDate: todayParsed(), lastRecordNumber: lastRecordNumber }
             return database.collection('misc').insertOne(myObj);
         })
         .then((result) => {
-            console.log("7")
             dataStruct.status = 200;
             dataStruct.lastUpdateCases = myObj.lastUpdateCases;
             dataStruct.lastUpdateDate = myObj.lastUpdateDate;
@@ -222,25 +203,21 @@ function dbCall(data) {
             return dataStruct;
         })
         .then((result) => {
-            console.log("8")
             clientMain.close();
-            return result;
+            parentPort.postMessage(result)
         })
         .catch((err) => {
-            console.log("err")
             if (clientMain) {
                 clientMain.close();
             }
             if (err.status && err.status === 201) {
-                return err;
+                parentPort.postMessage(err)
             }
             else {
                 dataStruct.status = 504
-                dataStruct.errorMessage = `DB Connection Error: ${err.message}`
-                console.error(`DB Connection Error: ${err.message}`);
-                return dataStruct;
+                dataStruct.errorMessage = err.message
+                console.error(err.message);
+                parentPort.postMessage(dataStruct)
             }
         })
-
-    //return dataStruct;
 }
