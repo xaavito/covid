@@ -87,3 +87,7 @@
 .MuiGrid-item.filter-grid-item {
   padding-top: 6px !important;
 }
+
+.footer {
+  padding-top: 0px !important;
+}
