@@ -10,7 +10,6 @@ import Button from '@mui/material/Button';
 
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
-//import Select from "react-dropdown-select";
 
 import { sexes, provinces } from "../options"
 
