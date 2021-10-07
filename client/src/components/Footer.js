@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 export default function Footer(props) {
 
   return (
-    <Container
+    <Container className="footer"
       maxWidth="md"
       component="footer"
       sx={{

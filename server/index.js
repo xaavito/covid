@@ -174,31 +174,7 @@ app.get("/covid/update", async (req, res) => {
     res.status(504).send({ message: err });
   }
 });
-/*
-var synchronize = (WorkerData) => {
-  console.log("synchronize")
-  return new Promise((resolve, reject) => {
-    const worker = new Worker("./server/workers/asyncDataLoad.js", { WorkerData });
-    worker.on('message', resolve);
-    worker.on('error', reject);
-    worker.on('exit', (code) => {
-      if (code !== 0)
-        reject(new Error(`stopped with  ${code} exit code`));
-    })
-    worker.postMessage(WorkerData);
-  })
-}
-*/
-/*
-var runSynchronize = async () => {
-  console.log("runSynchronize")
-  const result = await synchronize("nadaaa");
-  console.log(result)
-  return result;
-  //console.log(JSON.stringify(result));
-  //return result;
-}
-*/
+
 // POST Method that fires the CSV LOAD
 app.post("/covid/update", async (req, res) => {
   try {
@@ -206,28 +182,10 @@ app.post("/covid/update", async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log("covid/update");
     const worker = new Worker("./server/workers/asyncDataLoad.js");
-    /*
-    runSynchronize()
-      .then(function (result) {
-        if (result.status === 200) {
-          console.log("200")
-          res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
-        }
-        if (result.status === 201) {
-          console.log("201")
-          res.status(result.status).send({});
-        }
-        if (result.status === 504) {
-          console.log("504")
-          res.status(result.status).send({ message: result.errorMessage });
-        }
-      })
-      .catch(err => console.error(err));
-      */
-    
-    worker.once("message", result => {
+
+    worker.on("message", result => {
       console.log("Backend " + JSON.stringify(result))
-      /*
+
       if (result.status === 200) {
         console.log("200")
         res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
@@ -239,7 +197,7 @@ app.post("/covid/update", async (req, res) => {
       if (result.status === 504) {
         console.log("504")
         res.status(result.status).send({ message: result.errorMessage });
-      }*/
+      }
     });
 
     worker.on("error", error => {

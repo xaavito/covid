@@ -39,18 +39,19 @@
 .combo-large {
   width: 100%;
   min-height: 36px;
-  border-color: grey;
+  border-color:rgb(204, 204, 204) ;
   border-width: 1px;
+  border-radius: 4px;
 }
 
 .font-bigger {
-  font-size: 4em;
+  font-size: 5em;
   font-weight: bolder;
   text-align: center;
 }
 
 .font-big {
-  font-size: 1.3em;
+  font-size: 2em;
   font-weight: bolder;
   text-align: center;
 }
@@ -85,4 +86,8 @@
 
 .MuiGrid-item.filter-grid-item {
   padding-top: 6px !important;
+}
+
+.footer {
+  padding-top: 0px !important;
 }
