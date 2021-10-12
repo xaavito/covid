@@ -1,5 +1,7 @@
 # Covid Bot Javier Gonzalez
 
+[![Build Status](https://app.travis-ci.com/xaavito/covid.svg?branch=master)](https://app.travis-ci.com/xaavito/covid)
+
 ## Bajar Proyecto
 ```
 git clone https://github.com/xaavito/covid.git
