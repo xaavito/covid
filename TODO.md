@@ -37,5 +37,7 @@ https://nodejs.org/api/worker_threads.html
 https://nodesource.com/blog/worker-threads-nodejs/
 https://livecodestream.dev/post/how-to-work-with-worker-threads-in-nodejs/
 
-Ver de liquidar todo el español
+Badges
+Mock DB
+
 
