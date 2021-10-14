@@ -10,4 +10,5 @@ services:
   - mongodb
 before_script:
   - sleep 10
+  - mongoimport --db covid --collection casos_1 --type csv --file filtered-s --headerline
   #- mongo covid --eval 'db.createUser({user:"covid",pwd:"covid",roles:[{role:"readWrite",db:"covid"}]});'
