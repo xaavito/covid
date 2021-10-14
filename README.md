@@ -2,6 +2,8 @@
 
 [![Build Status](https://app.travis-ci.com/xaavito/covid.svg?branch=master)](https://app.travis-ci.com/xaavito/covid)
 
+[![codecov](https://codecov.io/gh/xaavito/covid/branch/master/graph/badge.svg?token=TR4VGHH4S0)](https://codecov.io/gh/xaavito/covid)
+
 ## Bajar Proyecto
 ```
 git clone https://github.com/xaavito/covid.git
