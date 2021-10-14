@@ -30,7 +30,7 @@ const test = {
     },
     tests: {
         deaths: 0,
-        newCases: 0
+        newCases: 3
     }
 };
 
