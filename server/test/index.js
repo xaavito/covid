@@ -28,12 +28,14 @@ after(async () => {
 // IMPORTANT!!!! IN ORDER FOR TESTS TO RUN DB MUST BE UP AND RUNNING
 
 describe("/covid/update GET unit test", () => {
-    it("should return results which may change over time so we check that is 200 ok only", (done) => {
+    it("should return results which may change over time so we check that is 200 ok only", () => {
         chai.request("http://localhost:3001").get("/covid/update").query().end((err, res) => {
             res.should.have.status(200);
             expect(res.body).to.have.property('lastUpdateCases').to.be.not.null;
             expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
-            done();
+            expect(res.body).not.to.have.property('pepe');
+            //expect(res.body).to.have.property('coco');
+            //done();
         })
     });
 });
