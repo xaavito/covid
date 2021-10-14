@@ -5,9 +5,15 @@ var cors = require('cors')
 
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
+// **************************************
+const config = require('./config.js');
 
-const PORT = process.env.PORT || 3001;
+const { app: { port } } = config;
 
+const { db: { auth, user, pass, host, dbport, name } } = config;
+
+const PORT = port || 3001;
+// **************************************
 const { Worker } = require("worker_threads");
 
 const app = express();
@@ -20,7 +26,13 @@ app.use(cors());
 //app.use(pino);
 
 //DB Connection String
-const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
+let dbURL;
+if (auth) {
+  dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
+}
+else {
+  dbURL = `mongodb://${host}:${dbport}/${name}`;
+}
 
 // Handle GET requests to /api route
 app.get("/api", (req, res) => {

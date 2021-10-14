@@ -13,6 +13,18 @@ const expect = require('chai').expect;
 
 chai.use(chaiHttp);
 
+const config = require('../config.js');
+const { db: { auth, user, pass, host, dbport, name } } = config;
+
+
+before(async () => {
+    
+});
+
+after(async () => {
+    
+});
+
 // IMPORTANT!!!! IN ORDER FOR TESTS TO RUN DB MUST BE UP AND RUNNING
 
 describe("/covid/update GET unit test", () => {

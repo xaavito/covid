@@ -18,26 +18,9 @@ https://stackoverflow.com/questions/24985684/mongodb-show-all-contents-from-all-
 docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
 
 
-https://stackoverflow.com/questions/42912755/how-to-create-a-db-for-mongodb-container-on-start-up
 
-evaluar esto
-
-var exec = require('child_process').exec;
-var cmd = 'mongoimport -d db_name -c collection_name --type csv --file file.csv --headerline';
-
-exec(cmd, function(error, stdout, stderr) {
-  // do whatever you need during the callback
-});
-
-
-
-VER TEMA WORKERS sync o con callback, eso no funca.
-https://blog.logrocket.com/use-cases-for-node-workers/
-https://nodejs.org/api/worker_threads.html
-https://nodesource.com/blog/worker-threads-nodejs/
-https://livecodestream.dev/post/how-to-work-with-worker-threads-in-nodejs/
 
 Badges
-Mock DB
+Mock DB https://opensourcelibs.com/lib/mongodb-memory-server
 
 
