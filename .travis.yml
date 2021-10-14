@@ -1,8 +1,13 @@
 language: node_js
 node_js:
   - 14.17.6
+before_install:
+  - npm install -g codecov
+script:
+  - npm run test
+  - npm run report-coverage
 services:
   - mongodb
 before_script:
-  - sleep 30
+  - sleep 10
   #- mongo covid --eval 'db.createUser({user:"covid",pwd:"covid",roles:[{role:"readWrite",db:"covid"}]});'
