@@ -31,6 +31,8 @@ describe("/covid/update GET unit test", () => {
     it("should return results which may change over time so we check that is 200 ok only", (done) => {
         chai.request("http://localhost:3001").get("/covid/update").end((err, res) => {
             res.should.have.status(200);
+            expect(res.body).to.have.property('lastUpdateCases').to.be.not.null;
+            expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
             done();
         })
     });
