@@ -41,7 +41,7 @@ describe("/covid/total GET unit test", () => {
         // calling home page api
         chai.request("http://localhost:3001").get("/covid/total").query({ sex: 'T', province: 1000, ageFrom: 0, ageTo: 50, startDate: '2021-09-01', endDate: '2021-09-30' }).end((err, res) => {
             res.should.have.status(200);
-            expect(res.body).to.have.property('newCases').to.be.equal(32140);
+            expect(res.body).to.have.property('newCases').to.be.equal(0);
             done();
         })
     });
@@ -52,7 +52,7 @@ describe("/covid/deaths GET unit test", () => {
         // calling home page api
         chai.request("http://localhost:3001").get("/covid/deaths").query({ sex: 'T', province: 1000, ageFrom: 0, ageTo: 50, startDate: '2021-09-01', endDate: '2021-09-30' }).end((err, res) => {
             res.should.have.status(200);
-            expect(res.body).to.have.property('covidDeaths').to.be.equal(108);
+            expect(res.body).to.have.property('deaths').to.be.equal(0);
             done();
         })
     });

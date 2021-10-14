@@ -4,5 +4,5 @@ node_js:
 services:
   - mongodb
 before_script:
-  - sleep 15
+  - sleep 30
   #- mongo covid --eval 'db.createUser({user:"covid",pwd:"covid",roles:[{role:"readWrite",db:"covid"}]});'
