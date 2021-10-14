@@ -1,4 +1,4 @@
-const env = process.env.NODE_ENV; // 'dev' or 'test'
+const env = process.env.NODE_ENV; // 'dev' or 'test' at least for now
 
 const dev = {
     app: {
@@ -11,6 +11,10 @@ const dev = {
         host: 'localhost',
         dbport: 27017,
         name: 'covid'
+    },
+    tests: {
+        deaths: 108,
+        newCases: 32140
     }
 };
 
@@ -23,6 +27,10 @@ const test = {
         host: '127.0.0.1',
         dbport: 27017,
         name: 'test'
+    },
+    tests: {
+        deaths: 0,
+        newCases: 0
     }
 };
 

@@ -131,7 +131,7 @@ app.get("/covid/update", async (req, res) => {
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
-    }).then(async (client) => {
+    }).then((client) => {
       dbConn = client.db("covid");
 
       // We search for the collection that holds last updated data
