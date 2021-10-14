@@ -34,8 +34,6 @@ describe("/covid/update GET unit test", () => {
             expect(res.body).to.have.property('lastUpdateCases').to.be.not.null;
             expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
             expect(res.body).not.to.have.property('pepe');
-            //expect(res.body).to.have.property('coco');
-            //done();
         })
     });
 });
