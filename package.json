@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha --exit server/test/index.js ",
-    "test-local": "NODE_ENV=dev mocha --exit server/test/index.js",
-    "coverage": "nyc --reporter=html mocha server/test/index.js",
+    "test": "NODE_ENV=test mocha --timeout 10000 --exit server/test/index.js ",
+    "test-local": "NODE_ENV=dev mocha --timeout 10000 --exit server/test/index.js",
+    "coverage": "NODE_ENV=dev nyc --reporter=html mocha --timeout 10000 --exit server/test/index.js",
     "server": "node server/index.js",
     "client": "npm start --prefix client",
     "build": "cd client && npm install && npm run build",
