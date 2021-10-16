@@ -34,6 +34,19 @@ else {
   dbURL = `mongodb://${host}:${dbport}/${name}`;
 }
 
+open = () => {
+  return new Promise((resolve, reject) => {
+    mongodb.MongoClient.connect(dbURL, (err, client) => { //Use "client" insted of "db" in the new MongoDB version
+      if (err) {
+        reject(err)
+      } else {
+        console.log("connection sucessfull")
+        resolve(client);
+      };
+    });
+  });
+};
+
 // Handle GET requests to /api route
 app.get("/api", (req, res) => {
   res.json({ message: "Hello from server!" });
@@ -49,9 +62,8 @@ app.get("/covid/total", async (req, res) => {
 
     let dbConn;
 
-    mongodb.MongoClient.connect(dbURL, {
-      useUnifiedTopology: true, ignoreUndefined: true
-    }).then((client) => {
+    //Seguir desde aca y el count
+    open().then((client) => {
       dbConn = client.db("covid");
 
       dbConn.collection('casos_1').count({

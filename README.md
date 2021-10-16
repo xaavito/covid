@@ -69,3 +69,8 @@ mongo -u covid -p covid --
 
 ## Experiencia General [Ver](EXPERIENCIA.md)
 
+
+docker build . -t javiermartingonzalez/covid
+
+
+
