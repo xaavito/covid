@@ -14,6 +14,7 @@ const expect = require('chai').expect;
 chai.use(chaiHttp);
 
 const config = require('../config.js');
+const { doesNotThrow } = require('should');
 const { db: { auth, user, pass, host, dbport, name }, tests: {deaths, newCases} } = config;
 
 
@@ -28,12 +29,13 @@ after(async () => {
 // IMPORTANT!!!! IN ORDER FOR TESTS TO RUN DB MUST BE UP AND RUNNING
 
 describe("/covid/update GET unit test", () => {
-    it("should return results which may change over time so we check that is 200 ok only", () => {
+    it("should return results which may change over time so we check that is 200 ok only", (done) => {
         chai.request("http://localhost:3001").get("/covid/update").query().end((err, res) => {
             res.should.have.status(200);
             expect(res.body).to.have.property('lastUpdateCases').to.be.not.null;
             expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
             expect(res.body).not.to.have.property('pepe');
+            done();
         })
     });
 });
