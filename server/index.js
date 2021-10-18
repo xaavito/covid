@@ -143,12 +143,18 @@ app.get("/covid/update", async (req, res) => {
 
     let dbConn;
 
+    let connection
+
     let myobj;
+    let lastUpdateDate;
+    let lastRecordNumber;
+    let lastUpdateCases;
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
     })
       .then((client) => {
+        connection = client;
         dbConn = client.db("covid");
 
         // We search for the collection that holds last updated data
@@ -193,9 +199,10 @@ app.get("/covid/update", async (req, res) => {
       })
       .then((results) => {
         // WE SEND OBJ, RESULTS DONT CARE NOW.
+        connection.close();
         res.status(200).send(myobj);
-        client.close();
       }).catch((err) => {
+        connection.close()
         // hack brake promise chain
         if (err.message === 'INFORMATION') {
           //console.error("HACKKKKK");
@@ -208,6 +215,7 @@ app.get("/covid/update", async (req, res) => {
         }
       });
   } catch (err) {
+    connection.close()
     console.error(err);
     res.status(504).send({ message: err });
   }
