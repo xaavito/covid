@@ -8,21 +8,13 @@
 ```
 git clone https://github.com/xaavito/covid.git
 ```
-
-## Instalar dependencias Server
-```
-cd covid
-npm install
-```
-
-## Instalar dependencias cliente
-```
-cd client/
-npm install
-```
-
 ## Precondiciones 
 
+### Buildear proyecto
+```
+cd PATH-TO-PROJECT/
+docker build . -t javiermartingonzalez/covid
+```
 ### Deszipear BD para preloading
 
 ```
@@ -33,7 +25,7 @@ mkdir mongo-import-volume
 sudo cp filtered.csv mongo-import-volume
 ```
 
-### Correr Docker para lanzar mongo
+### Correr Docker para lanzar aplicacion
 ```
 docker-compose up -d
 ```
@@ -43,13 +35,7 @@ docker-compose up -d
 docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
 ```
 
-## Correr Servidor y Cliente Concurrentemente
-```
-cd ..
-npm run dev
-```
-
-## Entrypoint (Deberia lanzarlo automaticamente...)
+## Entrypoint 
 ```
 http://localhost:3000/
 ```
@@ -70,7 +56,6 @@ mongo -u covid -p covid --
 ## Experiencia General [Ver](EXPERIENCIA.md)
 
 
-docker build . -t javiermartingonzalez/covid
 
 
 

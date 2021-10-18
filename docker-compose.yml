@@ -4,6 +4,7 @@ services:
     image: 'mongo'
     container_name: 'mongo'
     environment:
+      - "TZ=America/Argentina/Buenos_Aires"
       - MONGO_INITDB_DATABASE=covid
       - MONGO_INITDB_ROOT_USERNAME=covid
       - MONGO_INITDB_ROOT_PASSWORD=covid
@@ -17,5 +18,7 @@ services:
   covid-app:
     image: 'javiermartingonzalez/covid'
     container_name: 'covid-app'
+    environment:
+      - "TZ=America/Argentina/Buenos_Aires"
     network_mode: host
     restart: unless-stopped
