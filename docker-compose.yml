@@ -15,14 +15,14 @@ services:
     ports:
       - '27017-27019:27017-27019'
     restart: unless-stopped
-  mongo_seed:
-    image: mongo
-    links:
-      - database
-    volumes:
-      - ./mongo-import-volume:/data/import
-    command:
-      /data/import/import.sh
+  #mongo_seed:
+    #image: mongo
+    #links:
+    #  - database
+    #volumes:
+    #  - ./mongo-import-volume:/data/import
+    #command:
+    #  /data/import/import.sh
   covid-app:
     image: 'javiermartingonzalez/covid'
     container_name: 'covid-app'
