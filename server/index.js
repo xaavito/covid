@@ -15,6 +15,7 @@ const { db: { auth, user, pass, host, dbport, name } } = config;
 const PORT = port || 3001;
 // **************************************
 const { Worker } = require("worker_threads");
+const { rejects } = require('assert');
 
 const app = express();
 // Have Node serve the files for our built React app
@@ -48,33 +49,40 @@ app.get("/covid/total", async (req, res) => {
     const params = req.query;
 
     let dbConn;
+    let connection;
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true, ignoreUndefined: true
-    }).then((client) => {
-      dbConn = client.db("covid");
+    })
+      .then((client) => {
+        connection = client;
+        dbConn = client.db("covid");
 
-      dbConn.collection('casos_1').count({
-        'edad': {
-          $gte: Number(params.ageFrom),
-          $lt: Number(params.ageTo)
-        },
-        'sexo': params.sex === 'T' ? undefined : params.sex,
-        'fecha_diagnostico': {
-          $gte: params.startDate,
-          $lt: params.endDate
-        },
-        'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
-        'clasificacion_resumen': 'Confirmado',
-        'fecha_fallecimiento': ''
-      }, function (err, results) {
+        return dbConn.collection('casos_1').count({
+          'edad': {
+            $gte: Number(params.ageFrom),
+            $lt: Number(params.ageTo)
+          },
+          'sexo': params.sex === 'T' ? undefined : params.sex,
+          'fecha_diagnostico': {
+            $gte: params.startDate,
+            $lt: params.endDate
+          },
+          'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
+          'clasificacion_resumen': 'Confirmado',
+          'fecha_fallecimiento': ''
+        });
+      })
+      .then((results) => {
         console.log("Cases " + results)
+        connection.close();
         res.status(200).send({ newCases: results });
+      })
+      .catch(err => {
+        console.error(err.message);
+        connection.close();
+        res.status(504).send({ message: err.message });
       });
-    }).catch(err => {
-      console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
-    });
   } catch (err) {
     console.error(err);
     res.status(504).send({ message: err });
@@ -89,32 +97,38 @@ app.get("/covid/deaths", async (req, res) => {
     const params = req.query;
 
     let dbConn;
+    let connection
 
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true, ignoreUndefined: true
-    }).then((client) => {
-      dbConn = client.db("covid");
+    })
+      .then((client) => {
+        connection = client;
+        dbConn = client.db("covid");
 
-      dbConn.collection('casos_1').count({
-        'edad': {
-          $gte: Number(params.ageFrom),
-          $lt: Number(params.ageTo)
-        },
-        'sexo': params.sex === 'T' ? undefined : params.sex,
-        'fecha_fallecimiento': {
-          $gte: params.startDate,
-          $lt: params.endDate
-        },
-        'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
-        'clasificacion_resumen': 'Confirmado'
-      }, function (err, results) {
+        return dbConn.collection('casos_1').count({
+          'edad': {
+            $gte: Number(params.ageFrom),
+            $lt: Number(params.ageTo)
+          },
+          'sexo': params.sex === 'T' ? undefined : params.sex,
+          'fecha_fallecimiento': {
+            $gte: params.startDate,
+            $lt: params.endDate
+          },
+          'residencia_provincia_id': Number(params.province) === 1000 ? undefined : Number(params.province),
+          'clasificacion_resumen': 'Confirmado'
+        });
+      })
+      .then((results) => {
         console.log("Deaths " + results)
+        connection.close();
         res.status(200).send({ deaths: results });
+      })
+      .catch(err => {
+        console.error(err.message);
+        res.status(504).send({ message: err.message });
       });
-    }).catch(err => {
-      console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
-    });
   } catch (err) {
     console.error(err);
     res.status(504).send({ message: err });
@@ -129,58 +143,70 @@ app.get("/covid/update", async (req, res) => {
 
     let dbConn;
 
+    let myobj;
+
     mongodb.MongoClient.connect(dbURL, {
       useUnifiedTopology: true,
-    }).then((client) => {
-      dbConn = client.db("covid");
+    })
+      .then((client) => {
+        dbConn = client.db("covid");
 
-      // We search for the collection that holds last updated data
-      dbConn.collection('misc').find({}).toArray((err, results) => {
-        if (err) throw err;
+        // We search for the collection that holds last updated data
+        return dbConn.collection('misc').find({}).toArray();
+      })
+      .then((results) => {
         // If Theres is information we use it.
         if (results.length === 1) {
           lastUpdateCases = results[0].lastUpdateCases;
           lastUpdateDate = results[0].lastUpdateDate;
 
-          res.status(200).send({ lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate });
+          myobj = { lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate }
+          // HACK, CANT BREAK PROMISE CHAIN SO WE WE BREAKE IT WITH AN ERROR
+          throw new Error('INFORMATION');
         }
-
         //if there is no information we gather it.
         if (results.length === 0) {
           //Search for the last event by Id_event
-          const cursor = dbConn.collection('casos_1')
+          return dbConn.collection('casos_1')
             .find()
             .sort({ "id_evento_caso": -1 })
-            .limit(1).toArray((err, results) => {
-              if (err) throw err;
-              var myobj;
-              if (results.length === 1) {
-                lastUpdateDate = results[0].ultima_actualizacion;
-                lastRecordNumber = results[0].id_evento_caso;
+            .limit(1).toArray();
+        }
+      })
+      .then((results) => {
+        if (results.length === 1) {
+          // WE GET THE LAST UPDATE DATE AND LAST EVENT CASE NR.
+          lastUpdateDate = results[0].ultima_actualizacion;
+          lastRecordNumber = results[0].id_evento_caso;
 
-                // Since there was no information we count total results (that since there is no information is the first import)
-                const cursor = dbConn.collection('casos_1')
-                  .count({}, function (err, results) {
-                    if (err) throw err;
-                    lastUpdateCases = results
+          // WE GET LATEST MISC DATA
+          return dbConn.collection('casos_1')
+            .count({});
+        }
+      })
+      .then((results) => {
+        lastUpdateCases = results
 
-                    myobj = { lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate, lastRecordNumber: lastRecordNumber }
-
-                    //Insert into misc the information about last updated date, records and id_event
-                    dbConn.collection('misc').insertOne(myobj, function (err, res) {
-                      if (err) throw err;
-                      client.close();
-                    });
-                    res.status(200).send({ lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate });
-                  });
-              }
-            });
+        myobj = { lastUpdateCases: lastUpdateCases, lastUpdateDate: lastUpdateDate, lastRecordNumber: lastRecordNumber }
+        //WITH ALL THE NEW DATA WE INSERT IT AS A NEW REGISTRY, THIS TIPUCALLY HAPPENS ON FIRTS IMPORT
+        return dbConn.collection('misc').insertOne(myobj);
+      })
+      .then((results) => {
+        // WE SEND OBJ, RESULTS DONT CARE NOW.
+        res.status(200).send(myobj);
+        client.close();
+      }).catch((err) => {
+        // hack brake promise chain
+        if (err.message === 'INFORMATION') {
+          //console.error("HACKKKKK");
+          res.status(200).send(myobj);
+        }
+        else {
+          // ACTUAL ERROR
+          console.error(err);
+          res.status(504).send({ message: err });
         }
       });
-    }).catch(err => {
-      console.error(`DB Connection Error: ${err.message}`);
-      res.status(504).send({ message: `DB Connection Error: ${err.message}` });
-    });
   } catch (err) {
     console.error(err);
     res.status(504).send({ message: err });
