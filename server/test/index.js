@@ -29,12 +29,13 @@ after(async () => {
 // IMPORTANT!!!! IN ORDER FOR TESTS TO RUN DB MUST BE UP AND RUNNING
 
 describe("/covid/update GET unit test", () => {
-    it("should return results which may change over time so we check that is 200 ok only", () => {
+    it("should return results which may change over time so we check that is 200 ok only", (done) => {
         chai.request("http://localhost:3001").get("/covid/update").query().end((err, res) => {
-            res.should.have.status(200);
+            expect(res.status).to.be.eq(200);
             expect(res.body).to.have.property('lastUpdateCases').to.be.not.null;
             expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
             expect(res.body).not.to.have.property('pepe');
+            done();
         })
     });
 });
@@ -44,7 +45,7 @@ describe("/covid/total GET unit test", () => {
     it("should return result", (done) => {
         // calling home page api
         chai.request("http://localhost:3001").get("/covid/total").query({ sex: 'T', province: 1000, ageFrom: 0, ageTo: 50, startDate: '2021-09-01', endDate: '2021-09-30' }).end((err, res) => {
-            res.should.have.status(200);
+            expect(res.status).to.be.eq(200);
             expect(res.body).to.have.property('newCases').to.be.equal(newCases);
             done();
         })
@@ -55,7 +56,7 @@ describe("/covid/deaths GET unit test", () => {
     it("should return result", (done) => {
         // calling home page api
         chai.request("http://localhost:3001").get("/covid/deaths").query({ sex: 'T', province: 1000, ageFrom: 0, ageTo: 50, startDate: '2021-09-01', endDate: '2021-09-30' }).end((err, res) => {
-            res.should.have.status(200);
+            expect(res.status).to.be.eq(200);
             expect(res.body).to.have.property('deaths').to.be.equal(deaths);
             done();
         })
