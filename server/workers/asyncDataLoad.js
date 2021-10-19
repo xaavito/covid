@@ -107,6 +107,7 @@ getMiscData = (results) => {
 processFile = (results) => {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream("UpdatedData.zip");
+        console.log(results)
 
         const request = https.get(downloadLink, function (response) {
             response.pipe(file);
