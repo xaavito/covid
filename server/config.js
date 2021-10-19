@@ -37,7 +37,7 @@ const test = {
     tests: {
         deaths: 0,
         newCases: 3,
-        lastUpdateCases: 10000,
+        lastUpdateCases: 2114,
         lastUpdateDate: '2021-10-17'
     }
 };
