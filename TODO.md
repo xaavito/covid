@@ -17,10 +17,10 @@ https://stackoverflow.com/questions/24985684/mongodb-show-all-contents-from-all-
 
 docker exec mongo mongoimport --db covid --collection casos_1 --type csv --file /data/import/filtered.csv --authenticationDatabase admin --username covid --password covid --headerline
 
+Badges alguno mas??
+
+mejorar cobertura
 
 
-
-Badges
-Mock DB https://opensourcelibs.com/lib/mongodb-memory-server
 
 

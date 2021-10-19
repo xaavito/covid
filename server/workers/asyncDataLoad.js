@@ -5,7 +5,8 @@ const fastcsv = require("fast-csv");
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
 
-const http = require('https');
+// HTTPS FILE DOWNLOADER HANDLER
+const https = require('https');
 
 const path = require('path');
 
@@ -20,7 +21,12 @@ const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
 const filePath = path.join(__dirname, "../../UpdatedData.zip")
 const destDir = path.join(__dirname, "../../")
 
+// ENVIRONMENT CONFIG
+const config = require('../config.js');
 
+const { app: { link } } = config;
+
+// MAIN DATA INITIALIZATION
 let dataStruct = {
     lastUpdateCases: "2000",
     lastUpdateDate: "2021-09-99",
@@ -28,7 +34,7 @@ let dataStruct = {
     errorMessage: "data",
     status: 200
 }
-
+// FUNCTION WHICH EXECUTES ITSELFS WHEN RECEIVES MESSAGE FROM PARENT
 parentPort.on("message", (data) => {
     dbCall(data);
 });
@@ -55,7 +61,7 @@ function todayParsed() {
     date = strSplitDate[2] + "-" + ('0' + strSplitDate[1]).slice(-2) + "-" + ('0' + strSplitDate[0]).slice(-2);
     return date;
 }
-
+// OPEN DATABASE FUNCTION
 open = () => {
     return new Promise((resolve, reject) => {
         mongodb.MongoClient.connect(dbURL, (err, client) => { //Use "client" insted of "db" in the new MongoDB version
@@ -68,7 +74,7 @@ open = () => {
         });
     });
 };
-
+// GET MISCELANEUS DATA FROM DATABASE
 getMiscData = (results) => {
     return new Promise((resolve, reject) => {
         if (results.length === 1) {
@@ -89,11 +95,12 @@ getMiscData = (results) => {
     });
 };
 
+// THE MAIN PROCESS WHICH ACTUALLY DOWNLOAD, PROCESS AND RETURN CSV TO INSERT INTO DATABASE
 processFile = (results) => {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream("UpdatedData.zip");
 
-        const request = http.get("https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip", function (response) {
+        const request = https.get(link, function (response) {
             response.pipe(file);
 
             response.on('end', async function () {
@@ -155,10 +162,8 @@ processFile = (results) => {
         });
     });
 };
-
+// DATABASE HANDLING FUNCTION.
 function dbCall(data) {
-    //https://stackoverflow.com/questions/37911838/how-to-use-mongodb-with-promises-in-node-js
-
     let database;
     let clientMain;
     let myObj;

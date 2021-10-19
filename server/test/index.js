@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 const config = require('../config.js');
 const { doesNotThrow } = require('should');
-const { db: { auth, user, pass, host, dbport, name }, tests: {deaths, newCases} } = config;
+const { db: { auth, user, pass, host, dbport, name }, tests: {deaths, newCases, lastUpdateCases, lastUpdateDate} } = config;
 
 
 before(async () => {
@@ -63,17 +63,17 @@ describe("/covid/deaths GET unit test", () => {
     });
 });
 
-/*
+
 // This Test cant be run since its execution could fire syn process which takes so long..
 // trust me this works
 describe("/covid/update POST unit test", () => {
     it("should return result", (done) => {
         // calling home page api
         chai.request("http://localhost:3001").post("/covid/update").end((err, res) => {
-            res.should.have.status(200);
-            expect(res.body).to.have.property('status').to.be.equal('Success');
+            expect(res.status).to.be.eq(200);
+            expect(res.body).to.have.property('lastUpdateCases').to.be.equal(lastUpdateCases);
+            expect(res.body).to.have.property('lastUpdateDate').to.be.equal(lastUpdateDate);
             done();
         })
     });
 });
-*/
