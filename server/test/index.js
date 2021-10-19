@@ -72,7 +72,7 @@ describe("/covid/update POST unit test", () => {
         chai.request("http://localhost:3001").post("/covid/update").end((err, res) => {
             expect(res.status).to.be.eq(200);
             expect(res.body).to.have.property('lastUpdateCases').to.be.equal(lastUpdateCases);
-            expect(res.body).to.have.property('lastUpdateDate').to.be.equal(lastUpdateDate);
+            expect(res.body).to.have.property('lastUpdateDate').to.be.not.null;
             done();
         })
     });
