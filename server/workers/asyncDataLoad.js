@@ -24,16 +24,16 @@ const { db: { auth, user, pass, host, dbport, name } } = config;
 //DB Connection String
 let dbURL;
 if (auth) {
-  dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
+    dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
 }
 else {
-  dbURL = `mongodb://${host}:${dbport}/${name}`;
+    dbURL = `mongodb://${host}:${dbport}/${name}`;
 }
 
 const filePath = path.join(__dirname, "../../UpdatedData.zip")
 const destDir = path.join(__dirname, "../../")
 
-const { app: { link } } = config;
+const { app: { downloadLink, unzipedFileName } } = config;
 
 // MAIN DATA INITIALIZATION
 let dataStruct = {
@@ -108,12 +108,14 @@ processFile = (results) => {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream("UpdatedData.zip");
 
-        const request = https.get(link, function (response) {
+        const request = https.get(downloadLink, function (response) {
             response.pipe(file);
 
             response.on('end', async function () {
                 // On Success we unzip it
                 console.log("Worker thread: Downloaded FILE OK")
+                console.log("destDir " + destDir)
+                console.log("filePath " + filePath)
                 await extract(filePath, { dir: `${destDir}` }, (err) => {
                     if (err) {
                         console.error('extraction failed.')
@@ -122,7 +124,7 @@ processFile = (results) => {
                 });
                 console.log("Worker thread: Extraction OK")
                 // we stream data for better memory handling of the big csv file
-                let stream = fs.createReadStream("Covid19Casos.csv");
+                let stream = fs.createReadStream(unzipedFileName);
                 let csvData = [];
                 let csvStream = fastcsv
                     .parse()

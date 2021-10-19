@@ -3,7 +3,9 @@ const env = process.env.NODE_ENV; // 'dev' or 'test' at least for now
 const dev = {
     app: {
         port: 3001,
-        link: 'https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip'
+        //link: 'https://sisa.msal.gov.ar/datos/descargas/covid-19/files/Covid19Casos.zip'
+        downloadLink: 'https://raw.githubusercontent.com/xaavito/covid/master/filtered-tail.zip',
+        unzipedFileName: 'filtered-tail.csv'
     },
     db: {
         auth: true,
@@ -24,7 +26,8 @@ const dev = {
 const test = {
     app: {
         port: 3001,
-        link: 'https://github.com/xaavito/covid/raw/master/filtered-tail.zip'
+        downloadLink: 'https://github.com/xaavito/covid/raw/master/filtered-tail.zip',
+        unzipedFileName: 'Covid19Casos.csv'
     },
     db: {
         auth: false,
