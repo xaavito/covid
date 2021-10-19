@@ -24,7 +24,7 @@ const dev = {
 const test = {
     app: {
         port: 3001,
-        link: 'https://github.com/xaavito/covid/blob/master/filtered-tail.zip'
+        link: 'https://github.com/xaavito/covid/raw/master/filtered-tail.zip'
     },
     db: {
         auth: false,
