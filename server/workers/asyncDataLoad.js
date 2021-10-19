@@ -16,13 +16,22 @@ const fs = require('fs');
 // Unzipper
 const extract = require('extract-zip')
 
-//DB Connection String
-const dbURL = 'mongodb://covid:covid@localhost:27017/covid';
-const filePath = path.join(__dirname, "../../UpdatedData.zip")
-const destDir = path.join(__dirname, "../../")
-
 // ENVIRONMENT CONFIG
 const config = require('../config.js');
+
+const { db: { auth, user, pass, host, dbport, name } } = config;
+
+//DB Connection String
+let dbURL;
+if (auth) {
+  dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
+}
+else {
+  dbURL = `mongodb://${host}:${dbport}/${name}`;
+}
+
+const filePath = path.join(__dirname, "../../UpdatedData.zip")
+const destDir = path.join(__dirname, "../../")
 
 const { app: { link } } = config;
 
