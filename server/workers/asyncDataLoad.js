@@ -77,7 +77,6 @@ open = () => {
             if (err) {
                 reject(err)
             } else {
-                console.log("connection sucessfull")
                 resolve(client);
             };
         });
