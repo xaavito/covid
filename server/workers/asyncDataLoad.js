@@ -114,8 +114,6 @@ processFile = (results) => {
             response.on('end', async function () {
                 // On Success we unzip it
                 console.log("Worker thread: Downloaded FILE OK")
-                console.log("destDir " + destDir)
-                console.log("filePath " + filePath)
                 await extract(filePath, { dir: `${destDir}` }, (err) => {
                     if (err) {
                         console.error('extraction failed.')
