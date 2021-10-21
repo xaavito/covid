@@ -1,0 +1,210 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Covid-app",
+        "description": "Covid-app by Javier Gonzalez",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Covid-app",
+            "description": "API for Covid information"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/covid/total": {
+            "parameters": [
+                {
+                    "name": "ageFrom",
+                    "in": "query",
+                    "required": true,
+                    "description": "Age from to search",
+                    "type": "integer"
+                },
+                {
+                    "name": "ageTo",
+                    "in": "query",
+                    "required": true,
+                    "description": "Age to to search",
+                    "type": "integer"
+                },
+                {
+                    "name": "sex",
+                    "in": "query",
+                    "required": true,
+                    "description": "Sex to search",
+                    "type": "string"
+                },
+                {
+                    "name": "province",
+                    "in": "query",
+                    "required": true,
+                    "description": "province to search",
+                    "type": "string"
+                },
+                {
+                    "name": "startDate",
+                    "in": "query",
+                    "required": true,
+                    "description": "From Date",
+                    "type": "string"
+                },
+                {
+                    "name": "endDate",
+                    "in": "query",
+                    "required": true,
+                    "description": "To Date",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "cases"
+                ],
+                "summary": "Covid Total cases registered",
+                "responses": {
+                    "200": {
+                        "description": "newCases",
+                        "schema": {
+                            "$ref": "#/definitions/NewCases"
+                        }
+                    }
+                }
+            }
+        },
+        "/covid/deaths": {
+            "parameters": [
+                {
+                    "name": "ageFrom",
+                    "in": "query",
+                    "required": true,
+                    "description": "Age from to search",
+                    "type": "integer"
+                },
+                {
+                    "name": "ageTo",
+                    "in": "query",
+                    "required": true,
+                    "description": "Age to to search",
+                    "type": "integer"
+                },
+                {
+                    "name": "sex",
+                    "in": "query",
+                    "required": true,
+                    "description": "Sex to search",
+                    "type": "string"
+                },
+                {
+                    "name": "province",
+                    "in": "query",
+                    "required": true,
+                    "description": "province to search",
+                    "type": "string"
+                },
+                {
+                    "name": "startDate",
+                    "in": "query",
+                    "required": true,
+                    "description": "From Date",
+                    "type": "string"
+                },
+                {
+                    "name": "endDate",
+                    "in": "query",
+                    "required": true,
+                    "description": "To Date",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Deaths"
+                ],
+                "summary": "Get Deaths filtered by params",
+                "responses": {
+                    "200": {
+                        "description": "deaths",
+                        "schema": {
+                            "$ref": "#/definitions/Deaths"
+                        }
+                    }
+                }
+            }
+        },
+        "/covid/update": {
+            "get": {
+                "tags": [
+                    "results"
+                ],
+                "summary": "Get latest updated cases and date",
+                "responses": {
+                    "200": {
+                        "description": "lastUpdateCases, lastUpdateDate, lastRecordNumber",
+                        "schema": {
+                            "$ref": "#/definitions/Update"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "results"
+                ],
+                "summary": "Fire new sync update from web",
+                "responses": {
+                    "200": {
+                        "description": "lastUpdateCases, lastUpdateDate, lastRecordNumber",
+                        "schema": {
+                            "$ref": "#/definitions/Update"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Deaths": {
+            "properties": {
+                "deaths": {
+                    "type": "number"
+                }
+            }
+        },
+        "NewCases": {
+            "properties": {
+                "newCases": {
+                    "type": "number"
+                }
+            }
+        },
+        "Update": {
+            "properties": {
+                "lastUpdateCases": {
+                    "type": "number"
+                },
+                "lastUpdateDate": {
+                    "type": "number"
+                },
+                "lastRecordNumber": {
+                    "type": "number"
+                }
+            }
+        }
+    }
+}

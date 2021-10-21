@@ -31,6 +31,7 @@
     "mongodb": "^4.1.2",
     "react-datepicker": "^4.2.1",
     "stream-to-mongo-db": "^1.6.0",
+    "swagger-ui-express": "^4.1.6",
     "yauzl": "^2.10.0"
   },
   "engines": {

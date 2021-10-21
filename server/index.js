@@ -2,6 +2,8 @@ const path = require('path');
 const express = require("express");
 const pino = require('express-pino-logger')();
 var cors = require('cors')
+const swaggerUi = require('swagger-ui-express');
+const openApiDocumentation = require('../swagger.json');
 
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
@@ -23,6 +25,8 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 // Avoid localhost connection
 app.use(cors());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 // PINO LOGGER
 //app.use(pino);
 
@@ -34,11 +38,6 @@ if (auth) {
 else {
   dbURL = `mongodb://${host}:${dbport}/${name}`;
 }
-
-// Handle GET requests to /api route
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
 
 // GET Method that returns new Cases
 app.get("/covid/total", async (req, res) => {
