@@ -30,8 +30,8 @@ else {
     dbURL = `mongodb://${host}:${dbport}/${name}`;
 }
 
-const filePath = path.join(__dirname, "../../UpdatedData.zip")
-const destDir = path.join(__dirname, "../../")
+const filePath = path.join(__dirname, "../../db-data/UpdatedData.zip")
+const destDir = path.join(__dirname, "../../db-data/")
 
 const { app: { downloadLink, unzipedFileName } } = config;
 
@@ -106,7 +106,7 @@ getMiscData = (results) => {
 // THE MAIN PROCESS WHICH ACTUALLY DOWNLOAD, PROCESS AND RETURN CSV TO INSERT INTO DATABASE
 processFile = (results) => {
     return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream("UpdatedData.zip");
+        const file = fs.createWriteStream("db-data/UpdatedData.zip");
         console.log(results)
 
         const request = https.get(downloadLink, function (response) {
@@ -123,7 +123,7 @@ processFile = (results) => {
                 });
                 console.log("Worker thread: Extraction OK")
                 // we stream data for better memory handling of the big csv file
-                let stream = fs.createReadStream(unzipedFileName);
+                let stream = fs.createReadStream(`./db-data/${unzipedFileName}`);
                 let csvData = [];
                 let csvStream = fastcsv
                     .parse()

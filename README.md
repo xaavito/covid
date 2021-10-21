@@ -16,11 +16,11 @@ docker build . -t javiermartingonzalez/covid
 ### Deszipear BD para preloading
 
 ```
-unzip filtered.zip
+unzip db-data/filtered.zip
 
 mkdir mongo-import-volume
 
-sudo cp filtered.csv mongo-import-volume
+sudo cp db-data/filtered.csv mongo-import-volume
 ```
 
 ### Correr Docker para lanzar aplicacion
@@ -40,6 +40,11 @@ http://localhost:3000/
 
 ## Help
 
+### Swagger
+```
+http://localhost:3001/api-docs
+```
+
 ### Correr Tests
 ***Tener previsamente la BD corriento***
 ```
@@ -51,7 +56,7 @@ npm run test
 mongo -u covid -p covid --
 ```
 
-## Experiencia General [Ver](EXPERIENCIA.md)
+## Experiencia General [Ver](docs/EXPERIENCIA.md)
 
 
 
