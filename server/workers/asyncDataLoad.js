@@ -123,7 +123,7 @@ processFile = (results) => {
                 });
                 console.log("Worker thread: Extraction OK")
                 // we stream data for better memory handling of the big csv file
-                let stream = fs.createReadStream(unzipedFileName);
+                let stream = fs.createReadStream(`./db-data/${unzipedFileName}`);
                 let csvData = [];
                 let csvStream = fastcsv
                     .parse()
