@@ -24,7 +24,7 @@ services:
     #command:
     #  /data/import/import.sh
   covid-app:
-    image: 'javiermartingonzalez/covid'
+    image: 'javiermartingonzalez/covid:latest'
     container_name: 'covid-app'
     environment:
       - "TZ=America/Argentina/Buenos_Aires"

@@ -89,11 +89,10 @@ function App() {
       headers: httpHeaders
     }).then((res) => {
       status = Number(res.status);
-      //setState({ ...state, response: status });
       setResponse(status);
 
       if (status >= 500) {
-        //setState({ ...state, error: true });
+        console.log("errrroooorrr!");
         setError(true);
       }
       return res.json();
@@ -102,16 +101,13 @@ function App() {
         if (status === 200) {
           setLastUpdated(data.lastUpdateDate);
           setNewRegistriesAdded(data.lastUpdateCases);
-          //setState({ ...state, lastUpdateDate: data.lastUpdateDate, lastUpdateCases: data.lastUpdateCases });
         }
         else {
-          //setState({ ...state, errorMessage: data.message });
           setErrorMessage(data.message);
           return;
         }
       })
       .catch((error) => {
-        //setState({ ...state, error: true, errorMessage: error });
         setError(true);
         setErrorMessage(JSON.stringify(error));
       });
@@ -122,35 +118,36 @@ function App() {
     setSyncDisabled(true);
     let status;
 
+    //console.log("sync")
     fetch(`http://localhost:3001/covid/update`, {
       method: 'POST',
       headers: httpHeaders
     }).then((res) => {
       status = Number(res.status);
       setResponse(status);
-
+      //console.log(status)
       if (status >= 500) {
+        //console.log("err")
         setError(true);
       }
       return res.json();
     })
       .then((data) => {
         if (status === 200) {
-          console.log("200 " + data.lastUpdateDate)
+          //console.log("200 " + data.lastUpdateDate)
           setLastUpdated(data.lastUpdateDate);
           setNewRegistriesAdded(data.lastUpdateCases);
           setErrorMessage();
-          //updateCases();
           setSyncDisabled(false);
         }
         // no new data
         else if (status === 201) {
-          console.log("201")
+          //console.log("201")
           setErrorMessage();
           setSyncDisabled(false);
         }
         else {
-          console.log("504")
+          //console.log("504")
           setErrorMessage(data.message);
           setSyncDisabled(false);
           return;

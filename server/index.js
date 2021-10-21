@@ -192,7 +192,7 @@ app.get("/covid/update", async (req, res) => {
         connection.close();
         res.status(200).send(myobj);
       }).catch((err) => {
-        connection.close()
+        //connection.close()
         // hack brake promise chain
         if (err.message === 'INFORMATION') {
           //console.error("HACKKKKK");
@@ -205,7 +205,7 @@ app.get("/covid/update", async (req, res) => {
         }
       });
   } catch (err) {
-    connection.close()
+    console.log("a verrrrr");
     console.error(err);
     res.status(504).send({ message: err });
   }

@@ -7,13 +7,7 @@ const dev = {
         unzipedFileName: 'Covid19Casos.csv'
     },
     db: {
-        auth: true,
-        user: 'covid',
-        pass: 'covid',
-        host: 'localhost',
-        dbport: 27017,
-        name: 'covid',
-        dbUrl: `mongodb://${dev.db.user}:${dev.db.pass}@${dev.db.host}:${dev.db.dbport}/${dev.db.name}`
+        dbURL: 'mongodb://covid:covid@localhost:27017/covid'
     },
     tests: {
         deaths: 108,
@@ -30,11 +24,7 @@ const test = {
         unzipedFileName: 'filtered-tail.csv'
     },
     db: {
-        auth: false,
-        host: '127.0.0.1',
-        dbport: 27017,
-        name: 'covid',
-        dbUrl: `mongodb://${dev.db.host}:${dev.db.dbport}/${dev.db.name}`
+        dbURL: 'mongodb://127.0.0.1:27017/covid'
     },
     tests: {
         deaths: 0,
