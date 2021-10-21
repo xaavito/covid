@@ -225,7 +225,7 @@ app.post("/covid/update", async (req, res) => {
   try {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    console.log("covid/update");
+    //console.log("covid/update");
     const worker = new Worker("./server/workers/asyncDataLoad.js");
 
     worker.on("message", result => {

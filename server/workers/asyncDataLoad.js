@@ -106,7 +106,7 @@ getMiscData = (results) => {
 // THE MAIN PROCESS WHICH ACTUALLY DOWNLOAD, PROCESS AND RETURN CSV TO INSERT INTO DATABASE
 processFile = (results) => {
     return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream("UpdatedData.zip");
+        const file = fs.createWriteStream("db-data/UpdatedData.zip");
         console.log(results)
 
         const request = https.get(downloadLink, function (response) {
