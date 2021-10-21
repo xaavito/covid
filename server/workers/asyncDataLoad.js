@@ -30,8 +30,8 @@ else {
     dbURL = `mongodb://${host}:${dbport}/${name}`;
 }
 
-const filePath = path.join(__dirname, "../../UpdatedData.zip")
-const destDir = path.join(__dirname, "../../")
+const filePath = path.join(__dirname, "../../db-data/UpdatedData.zip")
+const destDir = path.join(__dirname, "../../db-data/")
 
 const { app: { downloadLink, unzipedFileName } } = config;
 

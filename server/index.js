@@ -3,7 +3,7 @@ const express = require("express");
 const pino = require('express-pino-logger')();
 var cors = require('cors')
 const swaggerUi = require('swagger-ui-express');
-const openApiDocumentation = require('../swagger.json');
+const openApiDocumentation = require('../swagger/swagger.json');
 
 // Import required module csvtojson and mongodb packages
 const mongodb = require('mongodb');
@@ -229,28 +229,28 @@ app.post("/covid/update", async (req, res) => {
     const worker = new Worker("./server/workers/asyncDataLoad.js");
 
     worker.on("message", result => {
-      console.log("Backend " + JSON.stringify(result))
+      //console.log("Backend " + JSON.stringify(result))
 
       if (result.status === 200) {
-        console.log("200")
+        //console.log("200")
         res.status(result.status).send({ lastUpdateCases: result.lastUpdateCases, lastUpdateDate: result.lastUpdateDate });
       }
       if (result.status === 201) {
-        console.log("201")
+        //console.log("201")
         res.status(result.status).send({});
       }
       if (result.status === 504) {
-        console.log("504")
+        //console.log("504")
         res.status(result.status).send({ message: result.errorMessage });
       }
     });
 
     worker.on("error", error => {
-      console.log(error);
+      console.error(error);
     });
 
     worker.on("exit", exitCode => {
-      console.log(exitCode);
+      //console.log(exitCode);
     })
 
     worker.postMessage("ndada");

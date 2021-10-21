@@ -9,7 +9,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=covid
       - MONGO_INITDB_ROOT_PASSWORD=covid
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./db-data/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./mongo-volume:/data/db
       - ./mongo-import-volume:/data/import
     ports:
