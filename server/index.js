@@ -12,7 +12,7 @@ const config = require('./config.js');
 
 const { app: { port } } = config;
 
-const { db: { auth, user, pass, host, dbport, name } } = config;
+const { db: { dbURL } } = config;
 
 const PORT = port || 3001;
 // **************************************
@@ -29,15 +29,6 @@ app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 // PINO LOGGER
 //app.use(pino);
-
-//DB Connection String
-let dbURL;
-if (auth) {
-  dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
-}
-else {
-  dbURL = `mongodb://${host}:${dbport}/${name}`;
-}
 
 // GET Method that returns new Cases
 app.get("/covid/total", async (req, res) => {

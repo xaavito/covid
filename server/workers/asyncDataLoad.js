@@ -19,16 +19,7 @@ const extract = require('extract-zip')
 // ENVIRONMENT CONFIG
 const config = require('../config.js');
 
-const { db: { auth, user, pass, host, dbport, name } } = config;
-
-//DB Connection String
-let dbURL;
-if (auth) {
-    dbURL = `mongodb://${user}:${pass}@${host}:${dbport}/${name}`;
-}
-else {
-    dbURL = `mongodb://${host}:${dbport}/${name}`;
-}
+const { db: { dbURL } } = config;
 
 const filePath = path.join(__dirname, "../../db-data/UpdatedData.zip")
 const destDir = path.join(__dirname, "../../db-data/")
@@ -107,8 +98,7 @@ getMiscData = (results) => {
 processFile = (results) => {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream("db-data/UpdatedData.zip");
-        console.log(results)
-
+        
         const request = https.get(downloadLink, function (response) {
             response.pipe(file);
 

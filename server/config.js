@@ -12,7 +12,8 @@ const dev = {
         pass: 'covid',
         host: 'localhost',
         dbport: 27017,
-        name: 'covid'
+        name: 'covid',
+        dbUrl: `mongodb://${dev.db.user}:${dev.db.pass}@${dev.db.host}:${dev.db.dbport}/${dev.db.name}`
     },
     tests: {
         deaths: 108,
@@ -25,14 +26,15 @@ const dev = {
 const test = {
     app: {
         port: 3001,
-        downloadLink: 'https://raw.githubusercontent.com/xaavito/covid/master/filtered-tail.zip',
+        downloadLink: 'https://raw.githubusercontent.com/xaavito/covid/master/db-data/filtered-tail.zip',
         unzipedFileName: 'filtered-tail.csv'
     },
     db: {
         auth: false,
         host: '127.0.0.1',
         dbport: 27017,
-        name: 'covid'
+        name: 'covid',
+        dbUrl: `mongodb://${dev.db.host}:${dev.db.dbport}/${dev.db.name}`
     },
     tests: {
         deaths: 0,
