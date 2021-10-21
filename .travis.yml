@@ -3,6 +3,7 @@ node_js:
   - 14.17.6
 before_install:
   - npm install -g codecov
+  - npm install -g npm@latest
 script:
   - npm run test
   - npm run report-coverage
